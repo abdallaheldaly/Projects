@@ -1,0 +1,5 @@
+x=input(" Enter x ")
+z=input(" Enter z ")
+print("z",x)
+print("x",z)
+input()
