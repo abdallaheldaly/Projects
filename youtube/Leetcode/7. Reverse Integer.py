@@ -12,5 +12,5 @@ class Solution(object):
                 temp = strg[1 : ] 
                 temp2 = temp[ : : -1] 
                 revst = "-" + temp2
-            if int(revst) >= 2**31-1 or int(revst) <= -2**31: return 0
+            if int(revst) >= 2 ** 31 - 1 or int(revst) <= -2 ** 31: return 0
             else: return int(revst)
