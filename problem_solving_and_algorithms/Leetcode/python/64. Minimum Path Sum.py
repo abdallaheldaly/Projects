@@ -4,6 +4,7 @@ class Solution(object):
         :type grid: List[List[int]]
         :rtype: int
         """
+        
         sum = list(grid[0])
         
         for j in xrange(1, len(grid[0])):
