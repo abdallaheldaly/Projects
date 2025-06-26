@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Guest Price Converter (USD → EGP)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+      background-color: #f9f9f9;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    label {
+      font-weight: bold;
+      margin-top: 10px;
+      display: block;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0 20px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Guest Price Calculator</h2>
+
+  <label for="usdInput">Enter Price in USD (Including VAT):</label>
+  <input type="number" id="usdInput" placeholder="e.g., 114">
+
+  <label for="guestUsd">USD without VAT (14%):</label>
+  <input type="text" id="guestUsd" readonly placeholder="Automatically calculated">
+
+  <label for="fixedEgp">Price in EGP (Fixed Rate 54):</label>
+  <input type="text" id="fixedEgp" readonly placeholder="EGP without VAT (14%)">
+
+  <label for="guestEgp">Guest Price in EGP (Using CBE Rate):</label>
+  <input type="text" id="guestEgp" readonly placeholder="This price does not include VAT (14%)">
+
+  <label for="guestUsdCBE">Guest Price in USD (Using CBE Rate):</label>
+  <input type="text" id="guestUsdCBE" readonly placeholder="Recalculated USD without VAT (14%)">
+
+  <button onclick="calculate()">Convert</button>
+
+  <script>
+    async function getCBEUSDExchangeRate() {
+      try {
+        const res = await fetch("https://api.exchangerate-api.com/v4/latest/USD");
+        const data = await res.json();
+        return data.rates.EGP;
+      } catch (error) {
+        alert("Failed to fetch exchange rate. Please check your internet connection.");
+        return null;
+      }
+    }
+
+    async function calculate() {
+      const usdInput = parseFloat(document.getElementById("usdInput").value);
+      if (isNaN(usdInput) || usdInput <= 0) {
+        alert("Please enter a valid price in USD.");
+        return;
+      }
+
+      const guestUsd = usdInput / 1.14;
+      const fixedRateEgp = guestUsd * 54;
+
+      const exchangeRate = await getCBEUSDExchangeRate();
+      if (!exchangeRate) return;
+
+      const guestEgp = guestUsd * exchangeRate;
+      const guestUsdCBE = guestEgp / exchangeRate;
+
+      document.getElementById("guestUsd").value = guestUsd.toFixed(2) + " USD";
+      document.getElementById("fixedEgp").value = fixedRateEgp.toFixed(2) + " EGP";
+      document.getElementById("guestEgp").value = guestEgp.toFixed(2) + " EGP (Rate: " + exchangeRate.toFixed(2) + ")";
+      document.getElementById("guestUsdCBE").value = guestUsdCBE.toFixed(2) + " USD";
+    }
+  </script>
+
+</body>
+</html>
