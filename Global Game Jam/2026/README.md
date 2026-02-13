@@ -78,7 +78,6 @@ We chose **writing input + voice output** deliberately:
 ### Developer
 Created by **Abdallah El-Daly** for Global Game Jam 2026
 
-[Portfolio](https://abdallaheldaly.github.io) | [GitHub](https://github.com/abdallaheldaly)
 
 ---
 
