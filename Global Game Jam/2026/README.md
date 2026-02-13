@@ -1,13 +1,19 @@
 ## Speculum Animae (The Mirror Within)
 **A 15-Stage Philosophical Journey Into the Self**
 
+### Links
+🎮 [Play on itch.io](https://abdallaheldaly.itch.io/the-mirror-within-a-journey-of-self)
+
+💻 [Play in Browser (GitHub)](https://abdallaheldaly.github.io/Projects/Global%20Game%20Jam/2026/index.html)
+
+---
+
 ### Overview
 *"Who looks outside, dreams; who looks inside, awakes."* — Carl Jung
 
 **Speculum Animae** (Latin: "Mirror of the Soul") is an introspective browser experience that invites you to embark on a profound journey of self-discovery. Through 15 carefully crafted philosophical stages, you'll explore the depths of consciousness, identity, and human existence—guided by the wisdom of history's greatest thinkers.
 
 This is not a game in the traditional sense. It is a **mirror**. It asks questions without easy answers. It listens without judgment. And it transforms as you reveal yourself to it.
-
 
 ---
 
@@ -78,6 +84,7 @@ We chose **writing input + voice output** deliberately:
 ### Developer
 Created by **Abdallah El-Daly** for Global Game Jam 2026
 
+[Portfolio](https://abdallaheldaly.github.io/abdallaheldaly/) | [GitHub](https://github.com/abdallaheldaly)
 
 ---
 
