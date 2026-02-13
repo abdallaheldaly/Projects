@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Mirror Within - A Journey of Self</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .cosmic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 40% 40%, rgba(100, 100, 255, 0.1) 0%, transparent 50%);
+            filter: blur(60px);
+            animation: cosmicShift 20s ease-in-out infinite;
+            z-index: -2;
+        }
+
+        @keyframes cosmicShift {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        /* Floating thoughts representing consciousness */
+        .thoughts {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .thought {
+            position: absolute;
+            font-size: 18px;
+            opacity: 0.1;
+            animation: float 20s infinite linear;
+            color: rgba(255, 255, 255, 0.3);
+            font-style: italic;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeIn 2s forwards;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3em;
+            font-weight: 400;
+            letter-spacing: 0.15em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #fff 0%, #a8a8a8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
+        }
+
+        .subtitle {
+            font-style: italic;
+            font-size: 1.2em;
+            color: #888;
+            letter-spacing: 0.15em;
+        }
+
+        /* Progress - 15 steps */
+        .progress-container {
+            margin-bottom: 30px;
+            overflow-x: auto;
+            padding: 10px 0;
+        }
+
+        .progress {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            min-width: 600px;
+            padding: 0 10px;
+        }
+
+        .step {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            position: relative;
+            transition: all 0.5s;
+        }
+
+        .step::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.5s;
+        }
+
+        .step.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .step.active::after {
+            background: #fff;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+            transform: translate(-50%, -50%) scale(1.3);
+        }
+
+        .step.completed {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .step.completed::after {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Mirror Visualization */
+        .mirror-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 40px;
+            aspect-ratio: 1;
+        }
+
+        .mirror-frame {
+            position: absolute;
+            inset: 0;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            box-shadow: 
+                0 0 60px rgba(255, 255, 255, 0.05),
+                inset 0 0 60px rgba(255, 255, 255, 0.02);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 60px rgba(255, 255, 255, 0.05), inset 0 0 60px rgba(255, 255, 255, 0.02); }
+            50% { box-shadow: 0 0 80px rgba(255, 255, 255, 0.1), inset 0 0 80px rgba(255, 255, 255, 0.05); }
+        }
+
+        .mirror-surface {
+            position: absolute;
+            inset: 15px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.5s;
+        }
+
+        .mirror-surface:hover {
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
+        }
+
+        /* The Self - Multi-layered representation */
+        .self-entity {
+            width: 140px;
+            height: 140px;
+            position: relative;
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .layer {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            transition: all 0.8s;
+        }
+
+        .layer-1 { /* The Mask - Persona */
+            background: conic-gradient(from 0deg, #4a4a6a, #6a4a5a, #4a6a5a, #5a4a6a, #4a4a6a);
+            opacity: 0.9;
+            animation: rotate 25s linear infinite;
+            box-shadow: 0 0 30px rgba(74, 74, 106, 0.5);
+        }
+
+        .layer-2 { /* The Ego */
+            background: radial-gradient(circle, #2a2a4a 0%, #1a1a2e 100%);
+            transform: scale(0.75);
+            opacity: 0.7;
+            animation: rotate 20s linear infinite reverse;
+        }
+
+        .layer-3 { /* The Shadow */
+            background: radial-gradient(circle, #1a0a2e 0%, #0a0a1a 100%);
+            transform: scale(0.55);
+            opacity: 0.6;
+            filter: blur(2px);
+        }
+
+        .layer-4 { /* The Core/Soul */
+            background: radial-gradient(circle at 30% 30%, #fff 0%, #ffd700 20%, #ff8c00 40%, transparent 70%);
+            transform: scale(0.3);
+            opacity: 0;
+            filter: blur(8px);
+            animation: corePulse 3s ease-in-out infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes corePulse {
+            0%, 100% { filter: blur(8px) brightness(1); transform: scale(0.3); }
+            50% { filter: blur(12px) brightness(1.4); transform: scale(0.35); }
+        }
+
+        .self-entity.revealed-1 .layer-1 { opacity: 0.4; transform: scale(1.3); }
+        .self-entity.revealed-1 .layer-2 { transform: scale(0.85); opacity: 0.8; }
+        
+        .self-entity.revealed-2 .layer-1 { opacity: 0.2; transform: scale(1.4); }
+        .self-entity.revealed-2 .layer-2 { transform: scale(0.95); opacity: 0.6; }
+        .self-entity.revealed-2 .layer-3 { transform: scale(0.7); opacity: 0.5; }
+        
+        .self-entity.revealed-3 .layer-1 { opacity: 0.1; transform: scale(1.5); }
+        .self-entity.revealed-3 .layer-2 { transform: scale(1.1); opacity: 0.4; }
+        .self-entity.revealed-3 .layer-3 { transform: scale(0.85); opacity: 0.6; }
+        .self-entity.revealed-3 .layer-4 { opacity: 0.8; transform: scale(0.5); }
+
+        .self-entity.revealed-4 .layer-1 { opacity: 0; transform: scale(1.8); }
+        .self-entity.revealed-4 .layer-2 { transform: scale(1.3); opacity: 0.2; }
+        .self-entity.revealed-4 .layer-3 { transform: scale(1.0); opacity: 0.4; }
+        .self-entity.revealed-4 .layer-4 { opacity: 1; transform: scale(0.7); animation: glow 2s ease-in-out infinite; }
+
+        @keyframes glow {
+            0%, 100% { filter: blur(10px) brightness(1); }
+            50% { filter: blur(20px) brightness(1.5); }
+        }
+
+        /* Speaking Indicator */
+        .speaking-indicator {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20, 20, 30, 0.9);
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 0.85em;
+            letter-spacing: 0.15em;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            border: 1px solid rgba(100, 255, 100, 0.3);
+            color: #99ff99;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .speaking-indicator.active {
+            opacity: 1;
+        }
+
+        .voice-wave {
+            display: flex;
+            gap: 3px;
+            align-items: center;
+            height: 20px;
+        }
+
+        .wave-bar {
+            width: 3px;
+            background: #99ff99;
+            border-radius: 2px;
+            animation: wave 0.5s ease-in-out infinite;
+        }
+
+        .wave-bar:nth-child(1) { height: 8px; animation-delay: 0s; }
+        .wave-bar:nth-child(2) { height: 15px; animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { height: 10px; animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { height: 18px; animation-delay: 0.3s; }
+        .wave-bar:nth-child(5) { height: 12px; animation-delay: 0.4s; }
+
+        @keyframes wave {
+            0%, 100% { transform: scaleY(0.5); }
+            50% { transform: scaleY(1); }
+        }
+
+        /* Interaction Panel */
+        .interaction-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 35px;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideUp 1s 0.5s forwards;
+        }
+
+        @keyframes slideUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .stage-indicator {
+            text-align: center;
+            color: #666;
+            font-size: 0.85em;
+            letter-spacing: 0.2em;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .question {
+            font-size: 1.4em;
+            text-align: center;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            color: #f0f0f0;
+            min-height: 60px;
+            font-weight: 600;
+        }
+
+        .subtext {
+            text-align: center;
+            color: #888;
+            font-size: 1.1em;
+            font-style: italic;
+            margin-bottom: 25px;
+            line-height: 1.4;
+            min-height: 50px;
+        }
+
+        .philosopher {
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        /* Text Input Section */
+        .input-section {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .input-hint {
+            text-align: center;
+            color: #999;
+            font-size: 0.95em;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .reflection-input {
+            width: 100%;
+            min-height: 80px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            color: #fff;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1em;
+            line-height: 1.5;
+            resize: vertical;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .reflection-input::placeholder {
+            color: #666;
+            font-style: italic;
+        }
+
+        .reflection-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .char-count {
+            text-align: right;
+            color: #666;
+            font-size: 0.8em;
+            margin-top: -10px;
+            margin-bottom: 15px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            font-size: 0.9em;
+            letter-spacing: 0.08em;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover {
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 255, 255, 0.1);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.primary {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Reflection Journal */
+        .journal {
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 3px solid rgba(255, 255, 255, 0.2);
+            padding: 20px 25px;
+            margin-top: 25px;
+            max-height: 250px;
+            overflow-y: auto;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.5s;
+        }
+
+        .journal.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .journal-entry {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeIn 0.5s;
+        }
+
+        .journal-entry:last-child {
+            border-bottom: none;
+        }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.8em;
+        }
+
+        .entry-stage {
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .entry-time {
+            color: #666;
+        }
+
+        .entry-text {
+            color: #ccc;
+            line-height: 1.5;
+            font-style: italic;
+        }
+
+        /* Final Revelation */
+        .revelation {
+            text-align: center;
+            padding: 60px 20px;
+            opacity: 0;
+            display: none;
+        }
+
+        .revelation.visible {
+            display: block;
+            animation: fadeIn 2s forwards;
+        }
+
+        .final-mirror {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 40px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #fff 0%, #ffd700 30%, #ff8c00 60%, transparent 70%);
+            filter: blur(20px);
+            animation: finalGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes finalGlow {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .quote {
+            font-size: 1.6em;
+            font-style: italic;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+
+        .author {
+            color: #888;
+            letter-spacing: 0.15em;
+            margin-bottom: 40px;
+        }
+
+        .summary {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: left;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .summary h3 {
+            color: #fff;
+            margin-bottom: 15px;
+            font-family: 'Cinzel', serif;
+            text-align: center;
+        }
+
+        .summary-list {
+            list-style: none;
+        }
+
+        .summary-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #aaa;
+        }
+
+        .summary-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8em; }
+            .question { font-size: 1.1em; }
+            .mirror-container { max-width: 280px; }
+            .interaction-panel { padding: 25px 20px; }
+            .progress { min-width: 500px; }
+            .reflection-input { font-size: 1em; }
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="cosmic-bg"></div>
+    <div class="thoughts" id="thoughts"></div>
+    
+    <div class="container">
+        <header>
+            <h1>The Mirror Within</h1>
+            <p class="subtitle">A Journey Into the Depths of Self</p>
+        </header>
+
+        <!-- Progress Steps -->
+        <div class="progress-container">
+            <div class="progress" id="progress">
+                <!-- 15 steps generated by JS -->
+            </div>
+        </div>
+
+        <!-- Mirror Visualization -->
+        <div class="mirror-container" id="mirrorContainer">
+            <div class="mirror-frame"></div>
+            <div class="mirror-surface" onclick="contemplate()">
+                <div class="self-entity" id="self">
+                    <div class="layer layer-1"></div>
+                    <div class="layer layer-2"></div>
+                    <div class="layer layer-3"></div>
+                    <div class="layer layer-4"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interaction Panel -->
+        <div class="interaction-panel" id="panel">
+            <div class="stage-indicator" id="stageIndicator">Stage 1 of 15</div>
+            
+            <div class="question" id="question">
+                "Who looks outside, dreams; who looks inside, awakes."
+            </div>
+            
+            <div class="subtext" id="subtext">
+                The journey begins with a single step inward.
+            </div>
+            
+            <div class="philosopher" id="philosopher">— Carl Jung</div>
+
+            <!-- Text Input Section -->
+            <div class="input-section">
+                <div class="input-hint">Write your reflection below, or click the mirror to contemplate silently</div>
+                
+                <textarea 
+                    class="reflection-input" 
+                    id="reflectionInput" 
+                    placeholder="What comes to mind when you ponder this question? Pour your thoughts here..."
+                    maxlength="500"
+                ></textarea>
+                
+                <div class="char-count" id="charCount">0 / 500</div>
+                
+                <div class="controls">
+                    <button onclick="submitReflection()" class="primary">Share Reflection →</button>
+                    <button onclick="skipReflection()">Continue Silently →</button>
+                </div>
+            </div>
+
+            <div class="journal" id="journal"></div>
+        </div>
+
+        <!-- Final Revelation -->
+        <div class="revelation" id="revelation">
+            <div class="final-mirror"></div>
+            
+            <div class="quote">
+                "I am not what happened to me,<br>
+                I am what I choose to become."
+            </div>
+            <div class="author">— Carl Jung</div>
+
+            <div class="summary">
+                <h3>Your Journey of Self</h3>
+                <ul class="summary-list" id="summaryList"></ul>
+            </div>
+
+            <button onclick="resetJourney()" class="primary" style="margin-top: 30px;">Begin Anew</button>
+        </div>
+    </div>
+
+    <!-- Speaking Indicator -->
+    <div class="speaking-indicator" id="speakingIndicator">
+        <span>SPEAKING</span>
+        <div class="voice-wave">
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        const journey = {
+            stage: 0,
+            reflections: [],
+            synth: window.speechSynthesis,
+            voices: [],
+            isSpeaking: false
+        };
+
+        // 15 Deep Philosophical Stages
+        const stages = [
+            {
+                question: "Who are you when no one is watching?",
+                subtext: "The mask we wear for others falls away in solitude. What remains?",
+                philosopher: "Carl Jung",
+                theme: "The Persona",
+                insight: "We begin with the surface—the social mask that protects our vulnerability."
+            },
+            {
+                question: "If you lost all your memories, would you still be you?",
+                subtext: "Is identity continuity of mind, or is there something deeper than experience?",
+                philosopher: "John Locke",
+                theme: "Memory & Identity",
+                insight: "Memory forms the narrative of self, yet something persists beneath the story."
+            },
+            {
+                question: "Who is the observer behind your thoughts?",
+                subtext: "When you think 'I am thinking', who is the 'I' that observes the thought?",
+                philosopher: "René Descartes",
+                theme: "The Witness",
+                insight: "There is a silent awareness within, watching the mind's theater unfold."
+            },
+            {
+                question: "Do you control your thoughts, or do they control you?",
+                subtext: "The mind generates endless chatter. Who chooses which thoughts to follow?",
+                philosopher: "Buddha",
+                theme: "Mastery of Mind",
+                insight: "Between stimulus and response lies our freedom to choose."
+            },
+            {
+                question: "What part of yourself have you buried deepest?",
+                subtext: "The shadow self contains rejected aspects seeking integration, not suppression.",
+                philosopher: "Carl Jung",
+                theme: "The Shadow",
+                insight: "Wholeness requires acknowledging what we hide, even from ourselves."
+            },
+            {
+                question: "Are you the same person who began reading this?",
+                subtext: "Cells die and regenerate. Thoughts flow like a river. What is constant?",
+                philosopher: "Heraclitus",
+                theme: "Impermanence",
+                insight: "Change is the only constant. We are processes, not fixed entities."
+            },
+            {
+                question: "Why do you fear death, if you won't experience it?",
+                subtext: "Death is the end of experience, yet the ego clings to existence.",
+                philosopher: "Epicurus",
+                theme: "Mortality",
+                insight: "Understanding death gives meaning to life."
+            },
+            {
+                question: "Do you love, or are you addicted to the feeling of loving?",
+                subtext: "Attachment binds us. True love liberates. Can you tell the difference?",
+                philosopher: "Rumi",
+                theme: "Attachment",
+                insight: "Love that demands nothing is the purest form."
+            },
+            {
+                question: "What if your worst suffering became your greatest teacher?",
+                subtext: "Pain cracks open the shell of ego, revealing the light within.",
+                philosopher: "Khalil Gibran",
+                theme: "Transformation",
+                insight: "Suffering, properly understood, is the doorway to depth."
+            },
+            {
+                question: "Are you seeking happiness, or running from pain?",
+                subtext: "The pursuit of pleasure often masks the fear of discomfort.",
+                philosopher: "Arthur Schopenhauer",
+                theme: "Desire",
+                insight: "Peace comes not from getting what we want, but from wanting what we have."
+            },
+            {
+                question: "Who would you be if you forgave everyone, including yourself?",
+                subtext: "Resentment is a poison we drink hoping others will suffer.",
+                philosopher: "Nelson Mandela",
+                theme: "Forgiveness",
+                insight: "Forgiveness is the gift you give yourself."
+            },
+            {
+                question: "Do you see reality, or your interpretation of it?",
+                subtext: "The mind filters experience through layers of belief and conditioning.",
+                philosopher: "Plato",
+                theme: "Perception",
+                insight: "We don't see things as they are; we see them as we are."
+            },
+            {
+                question: "What legacy will outlast your name?",
+                subtext: "Fame fades. Impact ripples through time in ways we cannot foresee.",
+                philosopher: "Marcus Aurelius",
+                theme: "Legacy",
+                insight: "How we touch others' lives is our true immortality."
+            },
+            {
+                question: "In absolute silence, who remains when thought ceases?",
+                subtext: "Beyond the chatter of mind lies pure awareness, eternal and unchanging.",
+                philosopher: "Ramana Maharshi",
+                theme: "The True Self",
+                insight: "You are not your thoughts. You are the space in which they arise."
+            },
+            {
+                question: "Will you step back into the illusion, or carry the truth?",
+                subtext: "Awakening is not an end but a beginning. The real work starts now.",
+                philosopher: "You",
+                theme: "Integration",
+                insight: "The journey inward never ends; it only deepens."
+            }
+        ];
+
+        // Initialize
+        function init() {
+            createThoughts();
+            createProgressSteps();
+            setupInput();
+            loadVoices();
+            updateStage();
+            
+            // Initial greeting
+            setTimeout(() => {
+                speak("Welcome to The Mirror Within. A journey of self awaits you.");
+            }, 1000);
+        }
+
+        // Load voices for TTS
+        function loadVoices() {
+            journey.voices = journey.synth.getVoices();
+            if (journey.voices.length === 0) {
+                journey.synth.onvoiceschanged = () => {
+                    journey.voices = journey.synth.getVoices();
+                };
+            }
+        }
+
+        // Text to Speech with visual indicator
+        function speak(text) {
+            if (!journey.synth) return;
+            
+            // Cancel previous speech
+            journey.synth.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.85;
+            utterance.pitch = 0.95;
+            utterance.volume = 0.8;
+            
+            // Select a good voice
+            const preferredVoice = journey.voices.find(v => 
+                v.name.includes('Google US English') || 
+                v.name.includes('Samantha') ||
+                v.name.includes('Daniel') ||
+                v.name.includes('Microsoft David') ||
+                (v.lang === 'en-US' && v.name.includes('Natural'))
+            );
+            
+            if (preferredVoice) {
+                utterance.voice = preferredVoice;
+            }
+            
+            // Show indicator when speaking
+            utterance.onstart = () => {
+                journey.isSpeaking = true;
+                document.getElementById('speakingIndicator').classList.add('active');
+            };
+            
+            utterance.onend = () => {
+                journey.isSpeaking = false;
+                document.getElementById('speakingIndicator').classList.remove('active');
+            };
+            
+            utterance.onerror = () => {
+                journey.isSpeaking = false;
+                document.getElementById('speakingIndicator').classList.remove('active');
+            };
+            
+            journey.synth.speak(utterance);
+        }
+
+        // Setup textarea input
+        function setupInput() {
+            const textarea = document.getElementById('reflectionInput');
+            const charCount = document.getElementById('charCount');
+            
+            textarea.addEventListener('input', function() {
+                const count = this.value.length;
+                charCount.textContent = `${count} / 500`;
+                
+                if (count > 450) {
+                    charCount.style.color = '#ff9999';
+                } else {
+                    charCount.style.color = '#666';
+                }
+            });
+
+            // Allow Enter key to submit (Shift+Enter for new line)
+            textarea.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    submitReflection();
+                }
+            });
+
+            // Auto-focus
+            setTimeout(() => textarea.focus(), 1500);
+        }
+
+        // Create floating thoughts
+        function createThoughts() {
+            const container = document.getElementById('thoughts');
+            const thoughts = [
+                'Who am I?', 'Why am I here?', 'What is real?', 
+                'I think...', 'I feel...', 'I remember...', 
+                'I fear...', 'I hope...', 'I love...',
+                'I am...', 'Let go...', 'Be present...',
+                'Breathe...', 'Accept...', 'Transform...'
+            ];
+            
+            setInterval(() => {
+                if (document.hidden) return;
+                const thought = document.createElement('div');
+                thought.className = 'thought';
+                thought.textContent = thoughts[Math.floor(Math.random() * thoughts.length)];
+                thought.style.left = Math.random() * 100 + '%';
+                thought.style.animationDuration = (15 + Math.random() * 10) + 's';
+                container.appendChild(thought);
+                
+                setTimeout(() => thought.remove(), 25000);
+            }, 2500);
+        }
+
+        // Create progress steps
+        function createProgressSteps() {
+            const container = document.getElementById('progress');
+            for (let i = 0; i < stages.length; i++) {
+                const step = document.createElement('div');
+                step.className = 'step' + (i === 0 ? ' active' : '');
+                step.title = `Stage ${i + 1}: ${stages[i].theme}`;
+                container.appendChild(step);
+            }
+        }
+
+        // Submit reflection
+        function submitReflection() {
+            const textarea = document.getElementById('reflectionInput');
+            const text = textarea.value.trim();
+            
+            if (text.length < 3) {
+                textarea.style.borderColor = '#ff6666';
+                speak("Please share a few words of reflection.");
+                setTimeout(() => {
+                    textarea.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                }, 1000);
+                return;
+            }
+            
+            processReflection(text);
+            
+            // Clear input
+            textarea.value = '';
+            document.getElementById('charCount').textContent = '0 / 500';
+        }
+
+        // Skip reflection
+        function skipReflection() {
+            speak("Silent contemplation is also wisdom.");
+            processReflection('[Silent contemplation]');
+        }
+
+        // Process reflection
+        function processReflection(text) {
+            addToJournal(text);
+            
+            // Visual feedback
+            const self = document.getElementById('self');
+            self.style.transform = 'scale(1.15)';
+            setTimeout(() => {
+                self.style.transform = 'scale(1)';
+            }, 400);
+            
+            // Speak acknowledgment
+            const acknowledgments = [
+                "Your reflection has been recorded.",
+                "A deep insight. Continue your journey.",
+                "The mirror sees your truth.",
+                "Wisdom flows through your words.",
+                "Your journey inward continues."
+            ];
+            speak(acknowledgments[Math.floor(Math.random() * acknowledgments.length)]);
+            
+            // Auto advance after short delay
+            setTimeout(() => {
+                if (journey.stage < stages.length - 1) {
+                    nextStage();
+                } else {
+                    showRevelation();
+                }
+            }, 2500);
+        }
+
+        // Mirror contemplation (click)
+        function contemplate() {
+            const self = document.getElementById('self');
+            const currentStage = journey.stage;
+            
+            // Cycle through reveal states
+            const states = ['', 'revealed-1', 'revealed-2', 'revealed-3', 'revealed-4'];
+            const currentState = states.find(s => self.classList.contains(s)) || '';
+            const nextIndex = (states.indexOf(currentState) + 1) % states.length;
+            
+            self.className = 'self-entity ' + states[nextIndex];
+            
+            // Visual feedback and optional voice
+            if (states[nextIndex]) {
+                self.style.filter = 'brightness(1.3)';
+                setTimeout(() => {
+                    self.style.filter = 'brightness(1)';
+                }, 300);
+                
+                // Speak theme briefly
+                speak(stages[currentStage].theme);
+            }
+        }
+
+        // Add to journal
+        function addToJournal(text) {
+            const journal = document.getElementById('journal');
+            const currentStage = stages[journey.stage];
+            
+            const entry = document.createElement('div');
+            entry.className = 'journal-entry';
+            
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            entry.innerHTML = `
+                <div class="entry-header">
+                    <span class="entry-stage">${currentStage.theme}</span>
+                    <span class="entry-time">${time}</span>
+                </div>
+                <div class="entry-text">"${text}"</div>
+            `;
+            
+            journal.insertBefore(entry, journal.firstChild);
+            journal.classList.add('visible');
+            
+            journey.reflections.push({
+                stage: journey.stage,
+                theme: currentStage.theme,
+                text: text,
+                time: time
+            });
+        }
+
+        // Next stage
+        function nextStage() {
+            if (journey.stage >= stages.length - 1) {
+                showRevelation();
+                return;
+            }
+            
+            journey.stage++;
+            updateStage();
+        }
+
+        // Update UI
+        function updateStage() {
+            const stage = stages[journey.stage];
+            
+            // Update text with fade
+            const elements = ['question', 'subtext', 'philosopher'];
+            elements.forEach(id => {
+                const el = document.getElementById(id);
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(10px)';
+            });
+            
+            setTimeout(() => {
+                document.getElementById('question').textContent = `"${stage.question}"`;
+                document.getElementById('subtext').textContent = stage.subtext;
+                document.getElementById('philosopher').textContent = `— ${stage.philosopher}`;
+                document.getElementById('stageIndicator').textContent = `Stage ${journey.stage + 1} of ${stages.length}: ${stage.theme}`;
+                
+                elements.forEach(id => {
+                    const el = document.getElementById(id);
+                    el.style.transition = 'all 0.5s';
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                });
+                
+                // Add insight to journal
+                addToJournal(stage.insight);
+                
+                // Focus textarea
+                document.getElementById('reflectionInput').focus();
+                
+            }, 300);
+            
+            // Update progress
+            document.querySelectorAll('.step').forEach((step, idx) => {
+                step.classList.remove('active', 'completed');
+                if (idx < journey.stage) step.classList.add('completed');
+                if (idx === journey.stage) step.classList.add('active');
+            });
+            
+            // Transform mirror based on stage
+            updateMirrorVisuals();
+            
+            // Speak the question
+            setTimeout(() => {
+                speak(stage.question);
+            }, 800);
+        }
+
+        function updateMirrorVisuals() {
+            const self = document.getElementById('self');
+            const progress = journey.stage / (stages.length - 1);
+            
+            self.className = 'self-entity';
+            
+            if (progress > 0.2) self.classList.add('revealed-1');
+            if (progress > 0.4) self.classList.add('revealed-2');
+            if (progress > 0.6) self.classList.add('revealed-3');
+            if (progress > 0.8) self.classList.add('revealed-4');
+        }
+
+        // Show final revelation
+        function showRevelation() {
+            document.getElementById('panel').style.display = 'none';
+            document.getElementById('mirrorContainer').style.display = 'none';
+            document.querySelector('.progress-container').style.display = 'none';
+            
+            const revelation = document.getElementById('revelation');
+            revelation.classList.add('visible');
+            
+            // Generate summary
+            const summaryList = document.getElementById('summaryList');
+            summaryList.innerHTML = '';
+            
+            journey.reflections.forEach((ref, idx) => {
+                if (idx % 2 === 0) { // Show every other reflection to avoid clutter
+                    const li = document.createElement('li');
+                    li.textContent = `${ref.theme}: ${ref.text.substring(0, 50)}${ref.text.length > 50 ? '...' : ''}`;
+                    summaryList.appendChild(li);
+                }
+            });
+            
+            // Final speech
+            setTimeout(() => {
+                speak("I am not what happened to me, I am what I choose to become. Your journey is complete, but the exploration never ends. You may begin anew whenever you wish.");
+            }, 1000);
+        }
+
+        // Reset
+        function resetJourney() {
+            journey.stage = 0;
+            journey.reflections = [];
+            
+            document.getElementById('journal').innerHTML = '';
+            document.getElementById('journal').classList.remove('visible');
+            
+            document.getElementById('panel').style.display = 'block';
+            document.getElementById('mirrorContainer').style.display = 'block';
+            document.querySelector('.progress-container').style.display = 'block';
+            document.getElementById('revelation').classList.remove('visible');
+            
+            // Reset steps
+            document.querySelectorAll('.step').forEach((step, idx) => {
+                step.classList.remove('active', 'completed');
+                if (idx === 0) step.classList.add('active');
+            });
+            
+            // Reset mirror
+            document.getElementById('self').className = 'self-entity';
+            
+            // Clear input
+            document.getElementById('reflectionInput').value = '';
+            document.getElementById('charCount').textContent = '0 / 500';
+            
+            updateStage();
+            
+            speak("A new journey begins.");
+        }
+
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                contemplate();
+            }
+        });
+
+        // Start
+        window.onload = init;
+    </script>
+</body>
+</html>
