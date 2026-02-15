@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة محل قطع الغيار</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .header h1 {
+            color: #1a1a1a;
+            font-size: 24px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+        
+        .btn-outline {
+            background: white;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+        
+        .btn-outline:hover {
+            background: #f9fafb;
+        }
+        
+        .btn-danger {
+            background: white;
+            color: #dc2626;
+            border: 1px solid #dc2626;
+        }
+        
+        .btn-danger:hover {
+            background: #fef2f2;
+        }
+        
+        .btn-orange {
+            background: white;
+            color: #ea580c;
+            border: 1px solid #ea580c;
+        }
+        
+        .btn-orange:hover {
+            background: #fff7ed;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Dashboard */
+        .dashboard {
+            margin-bottom: 30px;
+        }
+        
+        .dashboard h2 {
+            margin-bottom: 15px;
+            color: #1a1a1a;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .stat-title {
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .stat-icon {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1a1a1a;
+        }
+        
+        .stat-subtitle {
+            color: #999;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .stat-card.blue { border-top: 3px solid #2563eb; }
+        .stat-card.green { border-top: 3px solid #16a34a; }
+        .stat-card.yellow { border-top: 3px solid #ca8a04; }
+        .stat-card.red { border-top: 3px solid #dc2626; }
+        .stat-card.purple { border-top: 3px solid #9333ea; }
+        
+        .stat-card.green .stat-value { color: #16a34a; }
+        .stat-card.yellow .stat-value { color: #ca8a04; }
+        .stat-card.red .stat-value { color: #dc2626; }
+        .stat-card.purple .stat-value { color: #9333ea; }
+        .stat-card.blue .stat-value { color: #2563eb; }
+        
+        /* Search Section */
+        .search-section {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .search-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #1e40af;
+            margin-bottom: 15px;
+        }
+        
+        .search-header h3 {
+            font-size: 18px;
+        }
+        
+        .search-box {
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 15px 50px;
+            font-size: 16px;
+            border: 2px solid #bfdbfe;
+            border-radius: 10px;
+            text-align: right;
+            background: white;
+            transition: border-color 0.2s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #2563eb;
+        }
+        
+        .clear-search {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 18px;
+            display: none;
+        }
+        
+        .clear-search:hover {
+            color: #666;
+        }
+        
+        .search-results {
+            margin-top: 10px;
+            color: #1e40af;
+            font-size: 14px;
+        }
+        
+        /* Filters */
+        .filters {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-label {
+            color: #666;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid #d1d5db;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn:hover {
+            background: #f9fafb;
+        }
+        
+        .filter-btn.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+        
+        .filter-btn.green.active {
+            background: #16a34a;
+            border-color: #16a34a;
+        }
+        
+        .filter-btn.yellow.active {
+            background: #ca8a04;
+            border-color: #ca8a04;
+        }
+        
+        .filter-btn.red.active {
+            background: #dc2626;
+            border-color: #dc2626;
+        }
+        
+        /* Table */
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background: #f9fafb;
+            padding: 15px 12px;
+            text-align: right;
+            font-weight: 600;
+            color: #374151;
+            font-size: 13px;
+            border-bottom: 1px solid #e5e7eb;
+            white-space: nowrap;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 13px;
+            color: #4b5563;
+        }
+        
+        tr:hover {
+            background: #f9fafb;
+        }
+        
+        .product-name {
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .quantity {
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .quantity.good { color: #16a34a; }
+        .quantity.low { color: #dc2626; }
+        
+        .price {
+            font-weight: 600;
+        }
+        
+        .selling-price {
+            color: #2563eb;
+            font-weight: bold;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .status-good {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .status-low {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-out {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .action-btn {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        
+        .action-btn.edit {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+        
+        .action-btn.edit:hover {
+            background: #dbeafe;
+        }
+        
+        .action-btn.delete {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+        
+        .action-btn.delete:hover {
+            background: #fee2e2;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .table-footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            background: #f9fafb;
+            color: #666;
+            font-size: 13px;
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+        
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .modal-header h2 {
+            font-size: 18px;
+            color: #1a1a1a;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #374151;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: right;
+            transition: border-color 0.2s;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+        
+        .form-group input:disabled {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 15px 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        /* Confirm Dialog */
+        .confirm-dialog {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .confirm-dialog h3 {
+            margin-bottom: 10px;
+            color: #1a1a1a;
+        }
+        
+        .confirm-dialog p {
+            color: #666;
+            margin-bottom: 25px;
+        }
+        
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .toast {
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            animation: slideDown 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .toast.success { background: #16a34a; }
+        .toast.error { background: #dc2626; }
+        .toast.info { background: #2563eb; }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Footer */
+        .footer {
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            padding: 20px;
+            text-align: center;
+            color: #999;
+            font-size: 13px;
+            margin-top: 40px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .filters {
+                justify-content: center;
+            }
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a1a1a1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div>
+                <h1>🔧 نظام إدارة محل قطع الغيار</h1>
+                <p>إدارة المخزن والمنتجات بسهولة - يعمل بدون إنترنت</p>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="openModal()">
+                    <span>+</span> إضافة منتج
+                </button>
+                <button class="btn btn-outline" onclick="exportData()">
+                    📥 تصدير
+                </button>
+                <label class="btn btn-outline" style="cursor: pointer;">
+                    📤 استيراد
+                    <input type="file" accept=".json" onchange="importData(this)" style="display: none;">
+                </label>
+                <button class="btn btn-orange" onclick="resetData()">
+                    🔄 إعادة تعيين
+                </button>
+                <button class="btn btn-danger" onclick="clearAll()">
+                    🗑️ حذف الكل
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Dashboard -->
+        <div class="dashboard">
+            <h2>📊 لوحة التحكم</h2>
+            <div class="stats-grid">
+                <div class="stat-card blue">
+                    <div class="stat-header">
+                        <span class="stat-title">إجمالي المنتجات</span>
+                        <span class="stat-icon">📦</span>
+                    </div>
+                    <div class="stat-value" id="totalProducts">0</div>
+                    <div class="stat-subtitle"><span id="totalQuantity">0</span> قطعة في المخزن</div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-header">
+                        <span class="stat-title">المنتجات المتوفرة</span>
+                        <span class="stat-icon">✅</span>
+                    </div>
+                    <div class="stat-value" id="inStockProducts">0</div>
+                    <div class="stat-subtitle">منتج بكمية جيدة</div>
+                </div>
+                <div class="stat-card yellow">
+                    <div class="stat-header">
+                        <span class="stat-title">كمية قليلة</span>
+                        <span class="stat-icon">⚠️</span>
+                    </div>
+                    <div class="stat-value" id="lowStockProducts">0</div>
+                    <div class="stat-subtitle">منتجات تحتاج تجديد</div>
+                </div>
+                <div class="stat-card red">
+                    <div class="stat-header">
+                        <span class="stat-title">نفذت الكمية</span>
+                        <span class="stat-icon">❌</span>
+                    </div>
+                    <div class="stat-value" id="outOfStockProducts">0</div>
+                    <div class="stat-subtitle">منتجات غير متوفرة</div>
+                </div>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card" style="border-top: 3px solid #3b82f6; background: #eff6ff;">
+                    <div class="stat-header">
+                        <span class="stat-title" style="color: #1e40af;">قيمة المخزن (تكلفة)</span>
+                        <span class="stat-icon">💰</span>
+                    </div>
+                    <div class="stat-value" style="color: #1e40af;" id="totalBaseValue">0 ج.م</div>
+                </div>
+                <div class="stat-card" style="border-top: 3px solid #22c55e; background: #f0fdf4;">
+                    <div class="stat-header">
+                        <span class="stat-title" style="color: #166534;">قيمة المخزن (بيع)</span>
+                        <span class="stat-icon">💵</span>
+                    </div>
+                    <div class="stat-value" style="color: #166534;" id="totalSellingValue">0 ج.م</div>
+                </div>
+                <div class="stat-card" style="border-top: 3px solid #a855f7; background: #faf5ff;">
+                    <div class="stat-header">
+                        <span class="stat-title" style="color: #7c3aed;">الربح المتوقع</span>
+                        <span class="stat-icon">📈</span>
+                    </div>
+                    <div class="stat-value" style="color: #7c3aed;" id="expectedProfit">0 ج.م</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <div class="search-header">
+                <span style="font-size: 20px;">🔍</span>
+                <h3>البحث في المنتجات</h3>
+            </div>
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    id="searchInput"
+                    placeholder="اكتب هنا للبحث باسم المنتج، الكود، الشركة، أو موديل السيارة..."
+                    oninput="handleSearch(this.value)"
+                >
+                <button class="clear-search" id="clearSearch" onclick="clearSearch()">✕</button>
+            </div>
+            <div class="search-results" id="searchResults"></div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <span class="filter-label">
+                <span>🔧</span>
+                <span>فلترة حسب:</span>
+            </span>
+            <button class="filter-btn active" onclick="setFilter('all')" id="filter-all">الكل</button>
+            <button class="filter-btn green" onclick="setFilter('inStock')" id="filter-inStock">متوفر</button>
+            <button class="filter-btn yellow" onclick="setFilter('lowStock')" id="filter-lowStock">كمية قليلة</button>
+            <button class="filter-btn red" onclick="setFilter('outOfStock')" id="filter-outOfStock">نفذت</button>
+        </div>
+
+        <!-- Products Table -->
+        <div class="table-container">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>الكود</th>
+                            <th>اسم المنتج</th>
+                            <th>الكمية</th>
+                            <th>الشركة</th>
+                            <th>النوع</th>
+                            <th>السعر الأساسي</th>
+                            <th>الخدمة</th>
+                            <th>سعر البيع</th>
+                            <th>الموديل</th>
+                            <th>الحالة</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsTable">
+                        <!-- Products will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-footer">
+                <span id="filteredCount">إجمالي المنتجات: 0</span>
+                <span id="totalCount">من أصل 0 منتج</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>نظام إدارة محل قطع الغيار © 2025 - يعمل بدون إنترنت</p>
+    </footer>
+
+    <!-- Product Modal -->
+    <div class="modal-overlay" id="productModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">إضافة منتج جديد</h2>
+            </div>
+            <div class="modal-body">
+                <form id="productForm" onsubmit="saveProduct(event)">
+                    <input type="hidden" id="productId">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>كود المنتج</label>
+                            <input type="text" id="itemCode" placeholder="أدخل كود المنتج">
+                        </div>
+                        <div class="form-group">
+                            <label>اسم المنتج *</label>
+                            <input type="text" id="productName" placeholder="أدخل اسم المنتج" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>عدد القطع *</label>
+                            <input type="number" id="quantity" placeholder="أدخل العدد" required min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>اسم الشركة</label>
+                            <input type="text" id="company" placeholder="أدخل اسم الشركة">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>نوع الصناعة</label>
+                            <input type="text" id="manufactureType" placeholder="مثال: كوري، صيني، تايواني">
+                        </div>
+                        <div class="form-group">
+                            <label>موديل السيارة</label>
+                            <input type="text" id="carModel" placeholder="أدخل موديل السيارة">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>السعر الأساسي *</label>
+                            <input type="number" id="basePrice" placeholder="0.00" required min="0" step="0.01" value="0" oninput="calculateSellingPrice()">
+                        </div>
+                        <div class="form-group">
+                            <label>الخدمة المضافة *</label>
+                            <input type="number" id="serviceFee" placeholder="1.20" required min="1" step="0.01" value="1.20" oninput="calculateSellingPrice()">
+                        </div>
+                        <div class="form-group">
+                            <label>سعر البيع</label>
+                            <input type="number" id="sellingPrice" disabled value="0">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline" onclick="closeModal()">إلغاء</button>
+                        <button type="submit" class="btn btn-primary">حفظ</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirm Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal" style="max-width: 400px;">
+            <div class="confirm-dialog">
+                <h3>⚠️ تأكيد الحذف</h3>
+                <p>هل أنت متأكد من حذف هذا المنتج؟ لا يمكن التراجع عن هذا الإجراء.</p>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button class="btn btn-outline" onclick="closeDeleteModal()">إلغاء</button>
+                    <button class="btn btn-danger" onclick="confirmDelete()" style="background: #dc2626; color: white;">حذف</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // Initial Data
+        const initialProducts = [
+            { id: '1', itemCode: '', name: 'فلتر بنزين تويوتا ياريس 2010خليجي', quantity: 2, company: '', manufactureType: '', basePrice: 450, serviceFee: 1.20, sellingPrice: 540, carModel: '' },
+            { id: '2', itemCode: '', name: 'صرة خلفي N16', quantity: 2, company: '', manufactureType: 'صيني', basePrice: 670, serviceFee: 1.20, sellingPrice: 804, carModel: '' },
+            { id: '3', itemCode: '', name: 'طقم طنبورة IX35', quantity: 1, company: 'vorTEX', manufactureType: 'كوري', basePrice: 1600, serviceFee: 1.25, sellingPrice: 2000, carModel: '' },
+            { id: '4', itemCode: '', name: 'طقم طنبورة N16', quantity: 1, company: '', manufactureType: 'تايواني', basePrice: 1450, serviceFee: 1.25, sellingPrice: 1812.50, carModel: '' },
+            { id: '5', itemCode: '', name: 'طقم طنبورة N17', quantity: 2, company: 'سيزر', manufactureType: '', basePrice: 1500, serviceFee: 1.25, sellingPrice: 1875, carModel: '' },
+            { id: '6', itemCode: '', name: 'طقم طنبورة افيو ٢٠١٠ - خلفي٢٠١٣', quantity: 1, company: 'GSB', manufactureType: 'صيني', basePrice: 2000, serviceFee: 1.25, sellingPrice: 2500, carModel: '' },
+            { id: '7', itemCode: '', name: 'طقم طنبورة اكسنت خلفي', quantity: 1, company: '', manufactureType: 'كوري', basePrice: 1600, serviceFee: 1.25, sellingPrice: 2000, carModel: '' },
+            { id: '8', itemCode: '', name: 'طقم طنبورة النترا MD', quantity: 1, company: '', manufactureType: 'تايواني', basePrice: 1700, serviceFee: 1.25, sellingPrice: 2125, carModel: '' },
+            { id: '9', itemCode: '', name: 'طقم طنبورة اوبترا خلفي', quantity: 1, company: '', manufactureType: 'كوري', basePrice: 1250, serviceFee: 1.25, sellingPrice: 1562.50, carModel: '' },
+            { id: '10', itemCode: '', name: 'طقم طنبورة تركي خلفي', quantity: 1, company: 'GAS', manufactureType: 'تايواني', basePrice: 1450, serviceFee: 1.25, sellingPrice: 1812.50, carModel: '' },
+            { id: '11', itemCode: '', name: 'طقم طنبورة خليجي خلفي', quantity: 1, company: 'GAS', manufactureType: 'تايواني', basePrice: 1700, serviceFee: 1.25, sellingPrice: 2125, carModel: '' },
+            { id: '12', itemCode: '', name: 'طقم طنبورة سبورتاج / IX35 Hi-Q', quantity: 1, company: '', manufactureType: 'صيني', basePrice: 1550, serviceFee: 1.25, sellingPrice: 1937.50, carModel: '' },
+            { id: '13', itemCode: '', name: 'فتلر فتيس النترا MD', quantity: 1, company: '', manufactureType: '', basePrice: 275, serviceFee: 1.20, sellingPrice: 330, carModel: '' },
+            { id: '14', itemCode: '', name: 'فلتر تكيف قرش خليجي', quantity: 1, company: '', manufactureType: '', basePrice: 90, serviceFee: 1.20, sellingPrice: 108, carModel: '' },
+            { id: '15', itemCode: '', name: 'اولسي قربه فتيس اتوماتيك قرش', quantity: 2, company: '', manufactureType: '', basePrice: 45, serviceFee: 1.20, sellingPrice: 54, carModel: '' },
+            { id: '16', itemCode: '', name: 'اولسي كرنك امامي قرش', quantity: 2, company: '', manufactureType: '', basePrice: 40, serviceFee: 1.20, sellingPrice: 48, carModel: '' },
+            { id: '17', itemCode: '', name: 'اولسي كرنك خلفي نيو النترا', quantity: 2, company: '', manufactureType: '', basePrice: 60, serviceFee: 1.20, sellingPrice: 72, carModel: '' },
+            { id: '18', itemCode: '', name: 'اولسي كوبلن بومه', quantity: 2, company: '', manufactureType: '', basePrice: 40, serviceFee: 1.20, sellingPrice: 48, carModel: '' },
+            { id: '19', itemCode: '', name: 'اولسي كوبلن توسان يمين شمال', quantity: 2, company: '', manufactureType: '', basePrice: 120, serviceFee: 1.20, sellingPrice: 144, carModel: '' },
+            { id: '20', itemCode: '', name: 'ايدل فرنا كوري', quantity: 3, company: '', manufactureType: '', basePrice: 0, serviceFee: 1.20, sellingPrice: 0, carModel: '' },
+            { id: '21', itemCode: '', name: 'ايدل لانوس كوري', quantity: 2, company: '', manufactureType: '', basePrice: 0, serviceFee: 1.20, sellingPrice: 0, carModel: '' },
+            { id: '22', itemCode: '', name: 'بار خاجي بومة', quantity: 1, company: '', manufactureType: '', basePrice: 500, serviceFee: 1.20, sellingPrice: 600, carModel: '' },
+            { id: '23', itemCode: '', name: 'بار خارجي N17', quantity: 1, company: '', manufactureType: '', basePrice: 625, serviceFee: 1.20, sellingPrice: 750, carModel: '' },
+            { id: '24', itemCode: '', name: 'بار خارجي N16', quantity: 1, company: '', manufactureType: '', basePrice: 730, serviceFee: 1.20, sellingPrice: 876, carModel: '' },
+            { id: '25', itemCode: '', name: 'بار خارجي افيو', quantity: 1, company: '', manufactureType: '', basePrice: 625, serviceFee: 1.20, sellingPrice: 750, carModel: '' },
+            { id: '26', itemCode: '', name: 'بار خارجي اكسنت RB', quantity: 1, company: '', manufactureType: '', basePrice: 650, serviceFee: 1.20, sellingPrice: 780, carModel: '' },
+            { id: '27', itemCode: '', name: 'بار خارجي النترا', quantity: 1, company: '', manufactureType: '', basePrice: 575, serviceFee: 1.20, sellingPrice: 690, carModel: '' },
+            { id: '28', itemCode: '', name: 'بار خارجي النترا HD', quantity: 1, company: '', manufactureType: '', basePrice: 780, serviceFee: 1.20, sellingPrice: 936, carModel: '' },
+            { id: '29', itemCode: '', name: 'بار خارجي النترا MD', quantity: 1, company: '', manufactureType: '', basePrice: 850, serviceFee: 1.20, sellingPrice: 1020, carModel: '' },
+            { id: '30', itemCode: '', name: 'بار خارجي اوبترا', quantity: 1, company: '', manufactureType: '', basePrice: 650, serviceFee: 1.20, sellingPrice: 780, carModel: '' },
+            { id: '31', itemCode: '', name: 'بار خارجي سيراتو ٢٠١٣', quantity: 1, company: '', manufactureType: '', basePrice: 850, serviceFee: 1.20, sellingPrice: 1020, carModel: '' },
+            { id: '32', itemCode: '', name: 'بار خارجي سيراتو ٢٠١٤', quantity: 1, company: '', manufactureType: '', basePrice: 850, serviceFee: 1.20, sellingPrice: 1020, carModel: '' },
+            { id: '33', itemCode: '', name: 'بار خارجي سيفيا', quantity: 2, company: '', manufactureType: '', basePrice: 385, serviceFee: 1.20, sellingPrice: 462, carModel: '' },
+            { id: '34', itemCode: '', name: 'بار خارجي سيفيا', quantity: 1, company: '', manufactureType: '', basePrice: 450, serviceFee: 1.20, sellingPrice: 540, carModel: '' },
+            { id: '35', itemCode: '', name: 'بار خارجي فيرنا', quantity: 1, company: '', manufactureType: '', basePrice: 485, serviceFee: 1.20, sellingPrice: 582, carModel: '' },
+            { id: '36', itemCode: '', name: 'بار خارجي قريش', quantity: 1, company: '', manufactureType: '', basePrice: 650, serviceFee: 1.20, sellingPrice: 780, carModel: '' },
+            { id: '37', itemCode: '', name: 'بار خارجي كارنز ٢٠١٣', quantity: 1, company: '', manufactureType: '', basePrice: 850, serviceFee: 1.20, sellingPrice: 1020, carModel: '' },
+            { id: '38', itemCode: '', name: 'بار خارجي كرولا', quantity: 1, company: '', manufactureType: '', basePrice: 550, serviceFee: 1.20, sellingPrice: 660, carModel: '' },
+            { id: '39', itemCode: '', name: 'بار خارجي لانوس', quantity: 1, company: '', manufactureType: '', basePrice: 500, serviceFee: 1.20, sellingPrice: 600, carModel: '' },
+            { id: '40', itemCode: '', name: 'بار خارجي نيو اكسنت', quantity: 1, company: '', manufactureType: '', basePrice: 630, serviceFee: 1.20, sellingPrice: 756, carModel: '' },
+            { id: '41', itemCode: '', name: 'بار خارجي نيو الكسنت', quantity: 1, company: '', manufactureType: '', basePrice: 500, serviceFee: 1.20, sellingPrice: 600, carModel: '' },
+            { id: '42', itemCode: '', name: 'بار خارجي نيو النترا', quantity: 1, company: '', manufactureType: '', basePrice: 625, serviceFee: 1.20, sellingPrice: 750, carModel: '' },
+            { id: '43', itemCode: '', name: 'بار داخلي اسبارك', quantity: 1, company: '', manufactureType: '', basePrice: 395, serviceFee: 1.20, sellingPrice: 474, carModel: '' },
+            { id: '44', itemCode: '', name: 'بار داخلي افيو', quantity: 1, company: '', manufactureType: '', basePrice: 800, serviceFee: 1.20, sellingPrice: 960, carModel: '' },
+            { id: '45', itemCode: '', name: 'بار داخلي اكسنت RB', quantity: 1, company: '', manufactureType: 'اصلي', basePrice: 500, serviceFee: 1.20, sellingPrice: 600, carModel: '' },
+            { id: '46', itemCode: '', name: 'بار داخلي الكسنت RB', quantity: 1, company: '', manufactureType: '', basePrice: 550, serviceFee: 1.20, sellingPrice: 660, carModel: '' },
+            { id: '47', itemCode: '', name: 'بار داخلي النترا ٢٠٠٥', quantity: 1, company: '', manufactureType: '', basePrice: 425, serviceFee: 1.20, sellingPrice: 510, carModel: '' },
+            { id: '48', itemCode: '', name: 'بار داخلي النترا HD', quantity: 1, company: '', manufactureType: '', basePrice: 500, serviceFee: 1.20, sellingPrice: 600, carModel: '' },
+            { id: '49', itemCode: '', name: 'بار داخلي النترا MD', quantity: 1, company: '', manufactureType: '', basePrice: 825, serviceFee: 1.20, sellingPrice: 990, carModel: '' },
+            { id: '50', itemCode: '', name: 'بار داخلي سبورتاج', quantity: 1, company: '', manufactureType: '', basePrice: 600, serviceFee: 1.20, sellingPrice: 720, carModel: '' }
+        ];
+
+        // State
+        let products = [];
+        let searchTerm = '';
+        let filterType = 'all';
+        let deleteId = null;
+
+        // Initialize
+        function init() {
+            const stored = localStorage.getItem('auto-parts-products');
+            if (stored) {
+                products = JSON.parse(stored);
+            } else {
+                products = [...initialProducts];
+                saveToStorage();
+            }
+            render();
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('auto-parts-products', JSON.stringify(products));
+        }
+
+        // Dashboard
+        function updateDashboard() {
+            const totalProducts = products.length;
+            const totalQuantity = products.reduce((sum, p) => sum + p.quantity, 0);
+            const lowStockProducts = products.filter(p => p.quantity > 0 && p.quantity <= 2).length;
+            const outOfStockProducts = products.filter(p => p.quantity === 0).length;
+            const inStockProducts = products.filter(p => p.quantity > 2).length;
+            
+            const totalBaseValue = products.reduce((sum, p) => sum + (p.basePrice * p.quantity), 0);
+            const totalSellingValue = products.reduce((sum, p) => sum + (p.sellingPrice * p.quantity), 0);
+            const expectedProfit = totalSellingValue - totalBaseValue;
+
+            document.getElementById('totalProducts').textContent = totalProducts;
+            document.getElementById('totalQuantity').textContent = totalQuantity;
+            document.getElementById('inStockProducts').textContent = inStockProducts;
+            document.getElementById('lowStockProducts').textContent = lowStockProducts;
+            document.getElementById('outOfStockProducts').textContent = outOfStockProducts;
+            document.getElementById('totalBaseValue').textContent = formatPrice(totalBaseValue);
+            document.getElementById('totalSellingValue').textContent = formatPrice(totalSellingValue);
+            document.getElementById('expectedProfit').textContent = formatPrice(expectedProfit);
+        }
+
+        function formatPrice(price) {
+            return new Intl.NumberFormat('ar-EG', {
+                style: 'currency',
+                currency: 'EGP',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(price);
+        }
+
+        // Search
+        function handleSearch(value) {
+            searchTerm = value;
+            const clearBtn = document.getElementById('clearSearch');
+            const resultsDiv = document.getElementById('searchResults');
+            
+            if (value) {
+                clearBtn.style.display = 'block';
+                const filtered = getFilteredProducts();
+                resultsDiv.innerHTML = `تم العثور على <strong>${filtered.length}</strong> منتج مطابق لـ "<strong>${value}</strong>"`;
+            } else {
+                clearBtn.style.display = 'none';
+                resultsDiv.innerHTML = '';
+            }
+            
+            renderTable();
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            handleSearch('');
+        }
+
+        // Filter
+        function setFilter(type) {
+            filterType = type;
+            
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(`filter-${type}`).classList.add('active');
+            
+            renderTable();
+        }
+
+        function getFilteredProducts() {
+            return products.filter(product => {
+                const matchesSearch = 
+                    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    product.itemCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    product.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    product.carModel.toLowerCase().includes(searchTerm.toLowerCase());
+                
+                if (filterType === 'all') return matchesSearch;
+                if (filterType === 'lowStock') return matchesSearch && product.quantity > 0 && product.quantity <= 2;
+                if (filterType === 'outOfStock') return matchesSearch && product.quantity === 0;
+                if (filterType === 'inStock') return matchesSearch && product.quantity > 2;
+                return matchesSearch;
+            });
+        }
+
+        // Table
+        function renderTable() {
+            const filtered = getFilteredProducts();
+            const tbody = document.getElementById('productsTable');
+            
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="12" class="empty-state">
+                            <div class="empty-state-icon">📦</div>
+                            <p>لا توجد منتجات مطابقة للبحث</p>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tbody.innerHTML = filtered.map((product, index) => {
+                    const status = getStockStatus(product.quantity);
+                    return `
+                        <tr>
+                            <td class="font-medium">${index + 1}</td>
+                            <td>${product.itemCode || '-'}</td>
+                            <td class="product-name" title="${product.name}">${product.name}</td>
+                            <td class="quantity ${product.quantity <= 2 ? 'low' : 'good'}">${product.quantity}</td>
+                            <td>${product.company || '-'}</td>
+                            <td>${product.manufactureType || '-'}</td>
+                            <td class="price">${formatPrice(product.basePrice)}</td>
+                            <td>${product.serviceFee}x</td>
+                            <td class="selling-price">${formatPrice(product.sellingPrice)}</td>
+                            <td>${product.carModel || '-'}</td>
+                            <td><span class="status-badge ${status.class}">${status.label}</span></td>
+                            <td>
+                                <div class="actions">
+                                    <button class="action-btn edit" onclick="editProduct('${product.id}')">✏️ تعديل</button>
+                                    <button class="action-btn delete" onclick="deleteProduct('${product.id}')">🗑️ حذف</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+            
+            document.getElementById('filteredCount').textContent = `إجمالي المنتجات: ${filtered.length}`;
+            document.getElementById('totalCount').textContent = `من أصل ${products.length} منتج`;
+        }
+
+        function getStockStatus(quantity) {
+            if (quantity === 0) return { label: 'نفذت الكمية', class: 'status-out' };
+            if (quantity <= 2) return { label: 'كمية قليلة', class: 'status-low' };
+            return { label: 'متوفر', class: 'status-good' };
+        }
+
+        // Modal
+        function openModal() {
+            document.getElementById('productModal').classList.add('active');
+            document.getElementById('modalTitle').textContent = 'إضافة منتج جديد';
+            document.getElementById('productForm').reset();
+            document.getElementById('productId').value = '';
+            calculateSellingPrice();
+        }
+
+        function closeModal() {
+            document.getElementById('productModal').classList.remove('active');
+        }
+
+        function calculateSellingPrice() {
+            const basePrice = parseFloat(document.getElementById('basePrice').value) || 0;
+            const serviceFee = parseFloat(document.getElementById('serviceFee').value) || 1;
+            document.getElementById('sellingPrice').value = (basePrice * serviceFee).toFixed(2);
+        }
+
+        function saveProduct(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('productId').value;
+            const product = {
+                id: id || Date.now().toString(),
+                itemCode: document.getElementById('itemCode').value,
+                name: document.getElementById('productName').value,
+                quantity: parseInt(document.getElementById('quantity').value) || 0,
+                company: document.getElementById('company').value,
+                manufactureType: document.getElementById('manufactureType').value,
+                basePrice: parseFloat(document.getElementById('basePrice').value) || 0,
+                serviceFee: parseFloat(document.getElementById('serviceFee').value) || 1.2,
+                sellingPrice: parseFloat(document.getElementById('sellingPrice').value) || 0,
+                carModel: document.getElementById('carModel').value
+            };
+            
+            if (id) {
+                const index = products.findIndex(p => p.id === id);
+                if (index !== -1) {
+                    products[index] = product;
+                }
+                showToast('تم تعديل المنتج بنجاح', 'success');
+            } else {
+                products.push(product);
+                showToast('تم إضافة المنتج بنجاح', 'success');
+            }
+            
+            saveToStorage();
+            render();
+            closeModal();
+        }
+
+        function editProduct(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+            
+            document.getElementById('productId').value = product.id;
+            document.getElementById('itemCode').value = product.itemCode;
+            document.getElementById('productName').value = product.name;
+            document.getElementById('quantity').value = product.quantity;
+            document.getElementById('company').value = product.company;
+            document.getElementById('manufactureType').value = product.manufactureType;
+            document.getElementById('basePrice').value = product.basePrice;
+            document.getElementById('serviceFee').value = product.serviceFee;
+            document.getElementById('sellingPrice').value = product.sellingPrice;
+            document.getElementById('carModel').value = product.carModel;
+            
+            document.getElementById('modalTitle').textContent = 'تعديل منتج';
+            document.getElementById('productModal').classList.add('active');
+        }
+
+        // Delete
+        function deleteProduct(id) {
+            deleteId = id;
+            document.getElementById('deleteModal').classList.add('active');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('active');
+            deleteId = null;
+        }
+
+        function confirmDelete() {
+            if (deleteId) {
+                products = products.filter(p => p.id !== deleteId);
+                saveToStorage();
+                render();
+                showToast('تم حذف المنتج بنجاح', 'success');
+            }
+            closeDeleteModal();
+        }
+
+        // Export/Import
+        function exportData() {
+            const dataStr = JSON.stringify(products, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            const link = document.createElement('a');
+            link.setAttribute('href', dataUri);
+            link.setAttribute('download', 'auto-parts-data.json');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('تم تصدير البيانات بنجاح', 'success');
+        }
+
+        function importData(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        products = imported;
+                        saveToStorage();
+                        render();
+                        showToast('تم استيراد البيانات بنجاح', 'success');
+                    } else {
+                        showToast('ملف غير صالح', 'error');
+                    }
+                } catch (error) {
+                    showToast('خطأ في قراءة الملف', 'error');
+                }
+            };
+            reader.readAsText(file);
+            input.value = '';
+        }
+
+        function resetData() {
+            if (confirm('هل أنت متأكد من إعادة تعيين البيانات إلى البيانات الأولية؟')) {
+                products = [...initialProducts];
+                saveToStorage();
+                render();
+                showToast('تم إعادة تعيين البيانات بنجاح', 'success');
+            }
+        }
+
+        function clearAll() {
+            if (confirm('هل أنت متأكد من حذف جميع المنتجات؟')) {
+                products = [];
+                saveToStorage();
+                render();
+                showToast('تم حذف جميع المنتجات', 'success');
+            }
+        }
+
+        // Toast
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Render
+        function render() {
+            updateDashboard();
+            renderTable();
+        }
+
+        // Close modals on outside click
+        document.getElementById('productModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+        
+        document.getElementById('deleteModal').addEventListener('click', function(e) {
+            if (e.target === this) closeDeleteModal();
+        });
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>
