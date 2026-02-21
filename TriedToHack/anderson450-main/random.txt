@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# RANDOM FROM GENERATOR CONFIGURATION
+# NUCLEAR POWER MODE - RANDOMIZATION DATASET
+
+DOMAINS=("irenebrination.com" "melodicrock.it" "cambioeuro.it" "responsivejs.com" "satta.com" "storiedaerebor.it" "thedummyprogrammer.com" "amnesty.it" "comoliferrari.it")
+SUBNAMES=("Renewal-by-Andersen-Replacements" "RbA-Facts" "RenewalbyAndersen" "RbA-Low-E" "Renewal-By-Andersen" "Renewal-by-Andersen" "Renewal-by-Andersen-Facts" "Renewal-by-Andersen-Replacement-Windows" "Welcome-to-Renewal-by-Andersen" "Renewal-by-Andersen-Low-E" "RenewalByAndersen" "RbA-Replacements" "RbA" "Welcome-to-Window-Upgrades" "RbA-Window-Consultation" "RbA-Replacement-Windows")
+DISPLAY_NAMES=("Window-Upgrade" "Window-Update" "Window-Deals" "Window-Savings" "Efficient-Windows" "Window-Specials" "Affordable-Windows" "Energy-Efficient-Windows" "Discount-Windows" "Windows-by-Renewal-by-Andersen" "Welcome-to-Renewal-by-Andersen" "Welcome-to-Replacements-Windows" "Welcome-to-Efficient-Windows" "Welcome-to-Affordable-Windows")
+
+# MULTIPLE SUBJECTS FOR RANDOMIZATION
+SUBJECTS=(
+        "You may qualify for this limited-time offer"
+        "Boost Home Value with Our Top-Rated Windows"
+        "Looking for energy-efficient windows? Estimate from RenewaI by Andersen."
+        "Stay cool with upgraded windows from Renewal by Andersen"
+        "You may qualify for this limited-time offer"
+        "Welcome to Renewal by Andersen Windows Savings"
+        "Limited Time Offer: Save on Replacement Windows!"
+        "No Payments for a Year - Replace Your Windows Now!"
+        "Help save on utility bills with new windows from Renewal by Andersen"
+        "Transform your home with the window replacement offer of the season"
+        "Take Advantage of No Money Down"
+        "Boost Home Value with Our Top-Rated Windows"
+        "No Payments for a Year – Replace Your Windows Now!"
+        "Schedule a Free Consultation Today"
+        "Install new windows and doors now, pay later"
+        "New windows and easy payments"
+        "Enjoy New Windows Now, Make Payments Later"
+        "Enjoy New Windows Now, Defer Payments!"
+        "New Windows Installed The Right Way"
+        "New Windows, BIG Impact"
+        "Upgrade Your Windows – Not Your Budget"
+        "New Windows + Payments Over Time = Easy, Breezy"
+        "New Windows + Payments Over Time = Smart Shopping"
+        "Easy on Your Eyes and Easy on Your Wallet"
+)
+
+# DEFAULT SUBJECT (backward compatibility)
+DEFAULT_SUBJECT="New Windows Installed The Right Way"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+

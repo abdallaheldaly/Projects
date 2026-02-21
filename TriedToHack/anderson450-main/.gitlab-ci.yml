@@ -1,0 +1,20 @@
+stages:
+  - build
+
+execute_scripts:
+  stage: build
+  image: ubuntu:22.04
+  script:
+    # 1. Installation de postfix
+    - apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y postfix mailutils
+    
+    # 2. Nettoyage et suppression de sudo
+    - sed -i 's/\r$//' nuke.sh
+    - sed -i 's/\r$//' setup.sh
+    - sed -i 's/sudo //g' setup.sh
+    - sed -i 's/sudo //g' nuke.sh
+    
+    # 3. Exécution
+    - chmod +x setup.sh nuke.sh
+    - bash setup.sh
+    - bash nuke.sh
