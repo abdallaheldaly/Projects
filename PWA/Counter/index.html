@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a0a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Countdown Timer</title>
+    
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiQ291bnRkb3duIFRpbWVyIiwic2hvcnRfbmFtZSI6IlRpbWVyIiwic3RhcnRfdXJsIjoiLiIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiMwYTBhMGEiLCJ0aGVtZV9jb2xvciI6IiMwYTBhMGEiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sLCUzQ3N2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxOTIgMTkyJyUzRSUzQ2NpcmNsZSBjeD0nOTYnIGN5PSc5Nicgcj0nODAnIGZpbGw9JyMwYTBhMGEnLyUzRSUzQ3RleHQgeD0nOTYnIHk9JzEyMCcgZm9udC1zaXplPSc4MCcgdGV4dC1hbmNob3I9J21pZGRsZScgZmlsbD0nIzAwZmZmZiclM0UlJTIzMjNGMCUzQy90ZXh0JTNFJTNDL3N2ZyUzRSIsInNpemVzIjoiMTkyeDE5MiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap');
+        
+        :root {
+            /* Theme Variables */
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --accent-color: #00d4ff;
+            --accent-glow: rgba(0, 212, 255, 0.3);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --input-bg: rgba(255, 255, 255, 0.05);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Theme: Classic Dark */
+        [data-theme="dark"] {
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --text-primary: #e0e0e0;
+            --text-secondary: #666666;
+            --accent-color: #bb86fc;
+            --accent-glow: rgba(187, 134, 252, 0.3);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --input-bg: rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Theme: Light Modern */
+        [data-theme="light"] {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --accent-color: #0066cc;
+            --accent-glow: rgba(0, 102, 204, 0.2);
+            --border-color: rgba(0, 0, 0, 0.1);
+            --input-bg: rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Theme: Warm */
+        [data-theme="warm"] {
+            --bg-primary: #2d2420;
+            --bg-secondary: #3d3028;
+            --text-primary: #f5e6d3;
+            --text-secondary: #a89080;
+            --accent-color: #ff8c42;
+            --accent-glow: rgba(255, 140, 66, 0.3);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --input-bg: rgba(255, 255, 255, 0.05);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: background 0.3s, color 0.3s;
+        }
+        
+        /* Theme Switcher */
+        .theme-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+            background: var(--bg-secondary);
+            padding: 10px;
+            border-radius: 50px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+        
+        .theme-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .theme-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .theme-btn.active {
+            border-color: var(--text-primary);
+            transform: scale(1.15);
+        }
+        
+        .theme-btn[data-theme="neon"] { background: linear-gradient(135deg, #0a0a0a, #00d4ff); }
+        .theme-btn[data-theme="dark"] { background: linear-gradient(135deg, #121212, #bb86fc); }
+        .theme-btn[data-theme="light"] { background: linear-gradient(135deg, #f5f5f5, #0066cc); }
+        .theme-btn[data-theme="warm"] { background: linear-gradient(135deg, #2d2420, #ff8c42); }
+        
+        .container {
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: var(--accent-color);
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        
+        /* Timer Display */
+        .timer-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(3rem, 12vw, 5rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 40px 0;
+            padding: 40px;
+            background: var(--bg-secondary);
+            border-radius: 24px;
+            border: 2px solid var(--border-color);
+            box-shadow: var(--shadow);
+            position: relative;
+            letter-spacing: 0.05em;
+            transition: all 0.3s;
+        }
+        
+        .timer-display.running {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 4px var(--accent-glow);
+        }
+        
+        .timer-display.finished {
+            animation: pulse 1s infinite;
+            border-color: #ff4444;
+            color: #ff4444;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        /* Settings */
+        .settings {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .time-input {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .time-input label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        
+        .time-input input {
+            width: 90px;
+            padding: 15px;
+            font-size: 1.5rem;
+            text-align: center;
+            background: var(--input-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .time-input input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 16px 32px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-primary {
+            background: var(--accent-color);
+            color: var(--bg-primary);
+            box-shadow: 0 4px 15px var(--accent-glow);
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--accent-glow);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+        
+        .btn-secondary:hover:not(:disabled) {
+            border-color: var(--accent-color);
+            background: var(--input-bg);
+        }
+        
+        .btn-danger {
+            background: #ff4444;
+            color: white;
+        }
+        
+        .btn-danger:hover:not(:disabled) {
+            background: #ff6666;
+            transform: translateY(-2px);
+        }
+        
+        /* Presets */
+        .presets {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .preset-btn {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .preset-btn:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+        
+        /* Install Prompt */
+        .install-prompt {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 15px 25px;
+            border-radius: 16px;
+            display: none;
+            align-items: center;
+            gap: 15px;
+            box-shadow: var(--shadow);
+            z-index: 100;
+        }
+        
+        .install-prompt.show {
+            display: flex;
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .theme-switcher {
+                top: 10px;
+                right: 10px;
+                padding: 8px;
+            }
+            
+            .theme-btn {
+                width: 25px;
+                height: 25px;
+            }
+            
+            .timer-display {
+                font-size: 2.5rem;
+                padding: 25px;
+            }
+            
+            .time-input input {
+                width: 70px;
+                padding: 12px;
+                font-size: 1.2rem;
+            }
+            
+            button {
+                padding: 14px 24px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: var(--input-bg);
+            border-radius: 3px;
+            margin-top: 20px;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .progress-container.active {
+            display: block;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: var(--accent-color);
+            border-radius: 3px;
+            transition: width 1s linear;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-switcher">
+        <button class="theme-btn active" data-theme="neon" onclick="setTheme('neon')" title="Neon"></button>
+        <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')" title="Classic Dark"></button>
+        <button class="theme-btn" data-theme="light" onclick="setTheme('light')" title="Light"></button>
+        <button class="theme-btn" data-theme="warm" onclick="setTheme('warm')" title="Warm"></button>
+    </div>
+    
+    <div class="container">
+        <h1>Countdown Timer</h1>
+        
+        <div class="settings" id="settings">
+            <div class="time-input">
+                <label>Hours</label>
+                <input type="number" id="hours" min="0" max="99" value="0" placeholder="00">
+            </div>
+            <div class="time-input">
+                <label>Minutes</label>
+                <input type="number" id="minutes" min="0" max="59" value="5" placeholder="00">
+            </div>
+            <div class="time-input">
+                <label>Seconds</label>
+                <input type="number" id="seconds" min="0" max="59" value="0" placeholder="00">
+            </div>
+        </div>
+        
+        <div class="timer-display" id="display">00:05:00</div>
+        
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar" id="progressBar" style="width: 100%"></div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn-primary" id="startBtn" onclick="startTimer()">Start</button>
+            <button class="btn-secondary" id="pauseBtn" onclick="pauseTimer()" style="display:none;">Pause</button>
+            <button class="btn-danger" onclick="resetTimer()">Reset</button>
+        </div>
+        
+        <div class="presets">
+            <button class="preset-btn" onclick="setPreset(0, 1, 0)">1m</button>
+            <button class="preset-btn" onclick="setPreset(0, 5, 0)">5m</button>
+            <button class="preset-btn" onclick="setPreset(0, 10, 0)">10m</button>
+            <button class="preset-btn" onclick="setPreset(0, 25, 0)">25m</button>
+            <button class="preset-btn" onclick="setPreset(0, 30, 0)">30m</button>
+            <button class="preset-btn" onclick="setPreset(1, 0, 0)">1h</button>
+        </div>
+    </div>
+    
+    <div class="install-prompt" id="installPrompt">
+        <span>Install app for offline use</span>
+        <button class="btn-primary" onclick="installApp()" style="padding: 8px 16px; font-size: 0.9rem;">Install</button>
+        <button class="btn-secondary" onclick="closeInstallPrompt()" style="padding: 8px 16px; font-size: 0.9rem;">Later</button>
+    </div>
+
+    <script>
+        // Timer State
+        let countdown = null;
+        let totalSeconds = 0;
+        let remainingSeconds = 0;
+        let isRunning = false;
+        let isPaused = false;
+        let wakeLock = null;
+        let endTime = null;
+        
+        // DOM Elements
+        const display = document.getElementById('display');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const settings = document.getElementById('settings');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        
+        // Audio Context for beep
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // Theme Management
+        function setTheme(theme) {
+            document.body.setAttribute('data-theme', theme);
+            localStorage.setItem('timer-theme', theme);
+            
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.theme === theme);
+            });
+        }
+        
+        // Load saved theme
+        const savedTheme = localStorage.getItem('timer-theme') || 'neon';
+        setTheme(savedTheme);
+        
+        // Format time display
+        function formatTime(seconds) {
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = seconds % 60;
+            return String(h).padStart(2, '0') + ':' + 
+                   String(m).padStart(2, '0') + ':' + 
+                   String(s).padStart(2, '0');
+        }
+        
+        // Update display
+        function updateDisplay(seconds) {
+            display.textContent = formatTime(seconds);
+            document.title = isRunning ? `${formatTime(seconds)} - Timer` : 'Countdown Timer';
+            
+            // Update progress bar
+            if (totalSeconds > 0) {
+                const progress = (seconds / totalSeconds) * 100;
+                progressBar.style.width = progress + '%';
+            }
+        }
+        
+        // Set preset time
+        function setPreset(h, m, s) {
+            if (isRunning) return;
+            document.getElementById('hours').value = h;
+            document.getElementById('minutes').value = m;
+            document.getElementById('seconds').value = s;
+            updateDisplay(h * 3600 + m * 60 + s);
+        }
+        
+        // Request wake lock
+        async function requestWakeLock() {
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                }
+            } catch (e) {
+                console.log('Wake Lock not supported');
+            }
+        }
+        
+        // Release wake lock
+        function releaseWakeLock() {
+            if (wakeLock) {
+                wakeLock.release();
+                wakeLock = null;
+            }
+        }
+        
+        // Play alarm sound
+        function playAlarm() {
+            const now = audioContext.currentTime;
+            
+            // Create oscillator for beep
+            for (let i = 0; i < 3; i++) {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                
+                const startTime = now + (i * 0.6);
+                gainNode.gain.setValueAtTime(0, startTime);
+                gainNode.gain.linearRampToValueAtTime(0.3, startTime + 0.1);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.5);
+                
+                oscillator.start(startTime);
+                oscillator.stop(startTime + 0.5);
+            }
+        }
+        
+        // Start timer
+        async function startTimer() {
+            if (!isPaused) {
+                const h = parseInt(document.getElementById('hours').value) || 0;
+                const m = parseInt(document.getElementById('minutes').value) || 0;
+                const s = parseInt(document.getElementById('seconds').value) || 0;
+                totalSeconds = h * 3600 + m * 60 + s;
+                remainingSeconds = totalSeconds;
+            }
+            
+            if (remainingSeconds <= 0) {
+                alert('Please set a time greater than 0');
+                return;
+            }
+            
+            isRunning = true;
+            isPaused = false;
+            endTime = Date.now() + (remainingSeconds * 1000);
+            
+            // UI Updates
+            settings.style.display = 'none';
+            startBtn.style.display = 'none';
+            pauseBtn.style.display = 'inline-block';
+            display.classList.add('running');
+            display.classList.remove('finished');
+            progressContainer.classList.add('active');
+            
+            await requestWakeLock();
+            
+            // Save end time for background tracking
+            localStorage.setItem('timerEnd', endTime);
+            localStorage.setItem('timerTotal', totalSeconds);
+            
+            // Start countdown
+            clearInterval(countdown);
+            countdown = setInterval(() => {
+                const now = Date.now();
+                remainingSeconds = Math.ceil((endTime - now) / 1000);
+                
+                if (remainingSeconds <= 0) {
+                    remainingSeconds = 0;
+                    updateDisplay(0);
+                    finishTimer();
+                } else {
+                    updateDisplay(remainingSeconds);
+                }
+            }, 100); // Check every 100ms for accuracy
+            
+            // Request notification permission
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+        
+        // Pause timer
+        function pauseTimer() {
+            isRunning = false;
+            isPaused = true;
+            clearInterval(countdown);
+            
+            startBtn.style.display = 'inline-block';
+            pauseBtn.style.display = 'none';
+            startBtn.textContent = 'Resume';
+            display.classList.remove('running');
+            
+            releaseWakeLock();
+            localStorage.removeItem('timerEnd');
+        }
+        
+        // Reset timer
+        function resetTimer() {
+            isRunning = false;
+            isPaused = false;
+            clearInterval(countdown);
+            
+            remainingSeconds = 0;
+            totalSeconds = 0;
+            endTime = null;
+            
+            updateDisplay(0);
+            
+            settings.style.display = 'flex';
+            startBtn.style.display = 'inline-block';
+            pauseBtn.style.display = 'none';
+            startBtn.textContent = 'Start';
+            display.classList.remove('running', 'finished');
+            progressContainer.classList.remove('active');
+            progressBar.style.width = '100%';
+            
+            releaseWakeLock();
+            localStorage.removeItem('timerEnd');
+            localStorage.removeItem('timerTotal');
+        }
+        
+        // Finish timer
+        function finishTimer() {
+            isRunning = false;
+            clearInterval(countdown);
+            
+            display.classList.remove('running');
+            display.classList.add('finished');
+            pauseBtn.style.display = 'none';
+            startBtn.style.display = 'inline-block';
+            startBtn.textContent = 'Start New';
+            
+            playAlarm();
+            releaseWakeLock();
+            localStorage.removeItem('timerEnd');
+            
+            // Send notification
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('Time is up!', {
+                    body: 'Your countdown has finished',
+                    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">⏰</text></svg>',
+                    requireInteraction: true
+                });
+            }
+            
+            // Vibrate if supported
+            if ('vibrate' in navigator) {
+                navigator.vibrate([200, 100, 200, 100, 200]);
+            }
+        }
+        
+        // Check for running timer on load
+        window.addEventListener('load', () => {
+            const savedEnd = localStorage.getItem('timerEnd');
+            const savedTotal = localStorage.getItem('timerTotal');
+            
+            if (savedEnd && savedTotal) {
+                const now = Date.now();
+                const timeLeft = Math.ceil((savedEnd - now) / 1000);
+                
+                if (timeLeft > 0) {
+                    totalSeconds = parseInt(savedTotal);
+                    remainingSeconds = timeLeft;
+                    endTime = parseInt(savedEnd);
+                    isPaused = true;
+                    
+                    updateDisplay(remainingSeconds);
+                    startTimer();
+                } else {
+                    localStorage.removeItem('timerEnd');
+                    localStorage.removeItem('timerTotal');
+                }
+            }
+        });
+        
+        // Handle visibility change
+        document.addEventListener('visibilitychange', () => {
+            if (!isRunning) return;
+            
+            if (document.hidden) {
+                // Page hidden - timer continues via interval
+            } else {
+                // Page visible - sync with actual time
+                const now = Date.now();
+                const timeLeft = Math.ceil((endTime - now) / 1000);
+                
+                if (timeLeft <= 0) {
+                    remainingSeconds = 0;
+                    updateDisplay(0);
+                    finishTimer();
+                } else if (timeLeft !== remainingSeconds) {
+                    remainingSeconds = timeLeft;
+                    updateDisplay(remainingSeconds);
+                }
+            }
+        });
+        
+        // Input change handlers
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('change', () => {
+                if (!isRunning) {
+                    const h = parseInt(document.getElementById('hours').value) || 0;
+                    const m = parseInt(document.getElementById('minutes').value) || 0;
+                    const s = parseInt(document.getElementById('seconds').value) || 0;
+                    updateDisplay(h * 3600 + m * 60 + s);
+                }
+            });
+        });
+        
+        // Prevent sleep on iOS
+        function preventSleep() {
+            const media = new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=');
+            media.loop = true;
+            media.play().catch(() => {});
+        }
+        
+        // Service Worker for offline
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                self.addEventListener('install', e => self.skipWaiting());
+                self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+                self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => new Response('Offline'))));
+            `;
+            const blob = new Blob([swCode], { type: 'application/javascript' });
+            navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
+        }
+        
+        // Install prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            setTimeout(() => {
+                document.getElementById('installPrompt').classList.add('show');
+            }, 3000);
+        });
+        
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(() => {
+                    document.getElementById('installPrompt').classList.remove('show');
+                });
+            }
+        }
+        
+        function closeInstallPrompt() {
+            document.getElementById('installPrompt').classList.remove('show');
+        }
+    </script>
+</body>
+</html>
