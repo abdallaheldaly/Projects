@@ -10,7 +10,7 @@ A beautiful, accurate, and feature-rich countdown timer that works seamlessly ac
 
 ## 🎯 Live Demo
 
-**Try it now:** [https://yourusername.github.io/countdown-timer](https://yourusername.github.io/countdown-timer)
+**Try it now:** [https://abdallaheldaly.github.io/Projects/PWA/Counter/index.html](https://abdallaheldaly.github.io/Projects/PWA/Counter/index.html)
 
 *No installation required - works instantly in your browser!*
 
@@ -36,7 +36,7 @@ A beautiful, accurate, and feature-rich countdown timer that works seamlessly ac
 ## 🚀 Quick Start
 
 ### Option 1: Try Online (Instant)
-👉 **[Open Live Demo](https://yourusername.github.io/countdown-timer)**
+👉 **[Open Live Demo](https://abdallaheldaly.github.io/Projects/PWA/Counter/index.html)**
 
 ### Option 2: Direct Use (Offline)
 1. Save the `index.html` file

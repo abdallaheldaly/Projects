@@ -10,7 +10,7 @@ A comprehensive, offline-first inventory management system designed specifically
 
 ## 🎯 Live Demo
 
-**Try it now:** [https://yourusername.github.io/auto-parts-system](https://yourusername.github.io/auto-parts-system)
+**Try it now:** [https://abdallaheldaly.github.io/Projects/PWA/SparePartsManagementSystem/%D9%86%D8%B8%D8%A7%D9%85_%D8%A7%D8%AF%D8%A7%D8%B1%D8%A9_%D9%82%D8%B7%D8%B9_%D8%A7%D9%84%D8%BA%D9%8A%D8%A7%D8%B1.html](https://abdallaheldaly.github.io/Projects/PWA/SparePartsManagementSystem/%D9%86%D8%B8%D8%A7%D9%85_%D8%A7%D8%AF%D8%A7%D8%B1%D8%A9_%D9%82%D8%B7%D8%B9_%D8%A7%D9%84%D8%BA%D9%8A%D8%A7%D8%B1.html)
 
 *No installation required - works instantly in your browser!*
 
@@ -70,7 +70,7 @@ A comprehensive, offline-first inventory management system designed specifically
 ## 🚀 Quick Start
 
 ### Option 1: Try Online (Instant)
-👉 **[Open Live Demo](https://yourusername.github.io/auto-parts-system)**
+👉 **[Open Live Demo](https://abdallaheldaly.github.io/Projects/PWA/SparePartsManagementSystem/%D9%86%D8%B8%D8%A7%D9%85_%D8%A7%D8%AF%D8%A7%D8%B1%D8%A9_%D9%82%D8%B7%D8%B9_%D8%A7%D9%84%D8%BA%D9%8A%D8%A7%D8%B1.html)**
 
 ### Option 2: Direct Open (Offline)
 1. Save the HTML file to your computer
