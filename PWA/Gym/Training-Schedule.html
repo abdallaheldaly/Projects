@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جدول التمارين الرياضية</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #e94560;
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #eaeaea;
+            margin-bottom: 40px;
+            font-size: 1.2em;
+        }
+
+        .exercises-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .exercise-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .exercise-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(233, 69, 96, 0.3);
+            border-color: #e94560;
+        }
+
+        .exercise-header {
+            background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .exercise-number {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .exercise-name {
+            color: white;
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+
+        .exercise-content {
+            padding: 20px;
+        }
+
+        .exercise-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid rgba(233, 69, 96, 0.3);
+        }
+
+        .equipment-section {
+            background: rgba(233, 69, 96, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+
+        .equipment-label {
+            color: #e94560;
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .equipment-name {
+            color: #eaeaea;
+            font-size: 1.1em;
+        }
+
+        .muscle-tag {
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
+            color: #ffd700;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-top: 10px;
+            margin-left: 5px;
+        }
+
+        .day-divider {
+            grid-column: 1 / -1;
+            background: linear-gradient(90deg, transparent, #e94560, transparent);
+            height: 3px;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .day-divider::before {
+            content: attr(data-day);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #1a1a2e;
+            color: #e94560;
+            padding: 10px 30px;
+            font-weight: bold;
+            font-size: 1.3em;
+            border-radius: 30px;
+            border: 2px solid #e94560;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #eaeaea;
+            padding: 30px;
+            background: rgba(233, 69, 96, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(233, 69, 96, 0.3);
+        }
+
+        .footer-text {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+
+        .coach-info {
+            background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .coach-name {
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .coach-phone {
+            font-size: 1.1em;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .exercises-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏋️ جدول التمارين الرياضية</h1>
+        <p class="subtitle">برنامج تدريبي مقسم على 4 أيام</p>
+
+        <div class="exercises-grid">
+
+            <!-- اليوم الأول -->
+            <div class="day-divider" data-day="اليوم الأول"></div>
+
+            <!-- 1. جنيرال -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">جنيرال</span>
+                    <span class="exercise-number">1</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/8d1bf207211a3c3028aabb649ab4764e677da43c.png" alt="جنيرال" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">بار أولمبي + رف (Barbell + Rack)</div>
+                    </div>
+                    <span class="muscle-tag">الصدر</span>
+                    <span class="muscle-tag">الكتف</span>
+                    <span class="muscle-tag">الترايسبس</span>
+                </div>
+            </div>
+
+            <!-- 2. سحب أمامي -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">سحب أمامي</span>
+                    <span class="exercise-number">2</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/fitnessprogramer.com/d0191c0230906c3eb0244b742a9fb9200893ac9d.gif" alt="سحب أمامي" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">جهاز سحب أمامي (Lat Pulldown)</div>
+                    </div>
+                    <span class="muscle-tag">الظهر</span>
+                    <span class="muscle-tag">العضلة القريعة</span>
+                </div>
+            </div>
+
+            <!-- 3. سحب أرضي -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">سحب أرضي</span>
+                    <span class="exercise-number">3</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/e77fa828c85dcdf297ae65e1a64c8eaa746909c3.png" alt="سحب أرضي" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">بار أولمبي + أوزان (Barbell)</div>
+                    </div>
+                    <span class="muscle-tag">الظهر</span>
+                    <span class="muscle-tag">الفخذ</span>
+                    <span class="muscle-tag">الأرداف</span>
+                </div>
+            </div>
+
+            <!-- 4. فراشة -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">فراشة</span>
+                    <span class="exercise-number">4</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/b5878b11cd0b51540dca57c43206b96596d40b24.png" alt="فراشة" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">دمبل + مقعد (Dumbbells + Bench)</div>
+                    </div>
+                    <span class="muscle-tag">الصدر</span>
+                    <span class="muscle-tag">الأمامي</span>
+                </div>
+            </div>
+
+            <!-- 5. دفع عادي -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">دفع عادي</span>
+                    <span class="exercise-number">5</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/fitnessprogramer.com/b918ad85d9142c15e9545e7611e55b66c1a70856.gif" alt="دفع عادي" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">بار أولمبي + رف (Barbell + Rack)</div>
+                    </div>
+                    <span class="muscle-tag">الصدر</span>
+                    <span class="muscle-tag">الترايسبس</span>
+                </div>
+            </div>
+
+            <!-- 6. رفرفة جانبية -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">رفرفة جانبية</span>
+                    <span class="exercise-number">6</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/43fda99593fe7b3006e842f947911ce1621dd9e6.png" alt="رفرفة جانبية" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">دمبل (Dumbbell Lateral Raise)</div>
+                    </div>
+                    <span class="muscle-tag">الكتف الجانبي</span>
+                </div>
+            </div>
+
+            <!-- 7. جهاز كتف -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">جهاز كتف</span>
+                    <span class="exercise-number">7</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/8d1bf207211a3c3028aabb649ab4764e677da43c.png" alt="جهاز كتف" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">جهاز ضغط الكتف (Shoulder Press Machine)</div>
+                    </div>
+                    <span class="muscle-tag">الكتف</span>
+                    <span class="muscle-tag">الترايسبس</span>
+                </div>
+            </div>
+
+            <!-- 8. باي دمبل -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">باي دمبل</span>
+                    <span class="exercise-number">8</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/e002fbc5df132321117289689287f50901de41f6.png" alt="باي دمبل" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">دمبل (Dumbbell Bicep Curl)</div>
+                    </div>
+                    <span class="muscle-tag">البايسبس</span>
+                </div>
+            </div>
+
+            <!-- 9. تراي حبل -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">تراي حبل</span>
+                    <span class="exercise-number">9</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/www.hevyapp.com/1421a59924e471eb549674913152f0ecf9458499.jpg" alt="تراي حبل" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">جهاز كابل + حبل (Cable + Rope)</div>
+                    </div>
+                    <span class="muscle-tag">الترايسبس</span>
+                </div>
+            </div>
+
+            <!-- 10. أمامي رجل -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">أمامي رجل</span>
+                    <span class="exercise-number">10</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/e77fa828c85dcdf297ae65e1a64c8eaa746909c3.png" alt="أمامي رجل" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">جهاز تمدد الرجل (Leg Extension)</div>
+                    </div>
+                    <span class="muscle-tag">الرباعية</span>
+                </div>
+            </div>
+
+            <!-- 11. خلفي جهاز -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">خلفي جهاز</span>
+                    <span class="exercise-number">11</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/9df2475a6e8af45358d8d2f94af027c3cd7bff89.png" alt="خلفي جهاز" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">جهاز سحب خلفي (Seated Row)</div>
+                    </div>
+                    <span class="muscle-tag">الظهر الأوسط</span>
+                </div>
+            </div>
+
+            <!-- اليوم الثاني -->
+            <div class="day-divider" data-day="اليوم الثاني"></div>
+
+            <!-- 1. بوش -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">بوش</span>
+                    <span class="exercise-number">1</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/e77fa828c85dcdf297ae65e1a64c8eaa746909c3.png" alt="بوش" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">كرة بوسو (Bosu Ball)</div>
+                    </div>
+                    <span class="muscle-tag">الكور</span>
+                    <span class="muscle-tag">التوازن</span>
+                </div>
+            </div>
+
+            <!-- 2. بار عالي -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">بار عالي</span>
+                    <span class="exercise-number">2</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/www.prosourcefit.com/eeaf9f810f7fd279f7ba0df46844dc5300a6a5e7.jpg" alt="بار عالي" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">بار علوي للتعليق (Pull Up Bar)</div>
+                    </div>
+                    <span class="muscle-tag">الظهر</span>
+                    <span class="muscle-tag">البايسبس</span>
+                </div>
+            </div>
+
+            <!-- 3. دفع واطي -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">دفع واطي</span>
+                    <span class="exercise-number">3</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/8d1bf207211a3c3028aabb649ab4764e677da43c.png" alt="دفع واطي" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">مقعد مائل سفلي + بار (Decline Bench)</div>
+                    </div>
+                    <span class="muscle-tag">الصدر السفلي</span>
+                </div>
+            </div>
+
+            <!-- 4. فراشة -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">فراشة</span>
+                    <span class="exercise-number">4</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/b5878b11cd0b51540dca57c43206b96596d40b24.png" alt="فراشة" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">دمبل + مقعد (Dumbbell Fly)</div>
+                    </div>
+                    <span class="muscle-tag">الصدر</span>
+                    <span class="muscle-tag">الداخلية</span>
+                </div>
+            </div>
+
+            <!-- 5. كابل كروس -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">كابل كروس</span>
+                    <span class="exercise-number">5</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/inflightfitness.com/4fdca14ba1a6149a50de05ae862c7bd72fdb7d51.webp" alt="كابل كروس" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">جهاز كابل كروس أوفر (Cable Crossover)</div>
+                    </div>
+                    <span class="muscle-tag">الصدر</span>
+                    <span class="muscle-tag">الداخلية</span>
+                </div>
+            </div>
+
+            <!-- 6. رفرفة جانبية -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">رفرفة جانبية</span>
+                    <span class="exercise-number">6</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/43fda99593fe7b3006e842f947911ce1621dd9e6.png" alt="رفرفة جانبية" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">دمبل (Dumbbell Lateral Raise)</div>
+                    </div>
+                    <span class="muscle-tag">الكتف الجانبي</span>
+                </div>
+            </div>
+
+            <!-- 7. رفرفة أمامية -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">رفرفة أمامية</span>
+                    <span class="exercise-number">7</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/e7fed7715ec918848f5c311e2213f3c14394316a.png" alt="رفرفة أمامية" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">دمبل (Dumbbell Front Raise)</div>
+                    </div>
+                    <span class="muscle-tag">الكتف الأمامي</span>
+                </div>
+            </div>
+
+            <!-- 8. تراي فرنساوي -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">تراي فرنساوي</span>
+                    <span class="exercise-number">8</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/iol-prod.appspot.com/baf01d5770468f80df959ed3e335a450ffb873ad" alt="تراي فرنساوي" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">بار EZ + مقعد (EZ Bar + Bench)</div>
+                    </div>
+                    <span class="muscle-tag">الترايسبس</span>
+                </div>
+            </div>
+
+            <!-- 9. مسطرة تراي -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">مسطرة تراي</span>
+                    <span class="exercise-number">9</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/2262a971584dfdf3a641b0ab62af729037bad576.png" alt="مسطرة تراي" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">جهاز ترايسبس ديب (Dip Station)</div>
+                    </div>
+                    <span class="muscle-tag">الترايسبس</span>
+                </div>
+            </div>
+
+            <!-- اليوم الثالث -->
+            <div class="day-divider" data-day="اليوم الثالث"></div>
+
+            <!-- 1. بول -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">بول</span>
+                    <span class="exercise-number">1</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/e77fa828c85dcdf297ae65e1a64c8eaa746909c3.png" alt="بول" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">كرة بوسو (Bosu Ball)</div>
+                    </div>
+                    <span class="muscle-tag">الكور</span>
+                    <span class="muscle-tag">التوازن</span>
+                </div>
+            </div>
+
+            <!-- 2. سحب أمامي -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">سحب أمامي</span>
+                    <span class="exercise-number">2</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/fitnessprogramer.com/d0191c0230906c3eb0244b742a9fb9200893ac9d.gif" alt="سحب أمامي" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">جهاز سحب أمامي (Lat Pulldown)</div>
+                    </div>
+                    <span class="muscle-tag">الظهر</span>
+                    <span class="muscle-tag">العضلة القريعة</span>
+                </div>
+            </div>
+
+            <!-- 3. تعريض -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">تعريض</span>
+                    <span class="exercise-number">3</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/images.squarespace-cdn.com/1bbce8f700236ef688dc887ea678040c1f590c81.jpeg" alt="تعريض" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">بار أولمبي واسع (Wide Grip Barbell Curl)</div>
+                    </div>
+                    <span class="muscle-tag">البايسبس</span>
+                </div>
+            </div>
+
+            <!-- 4. سحب بار ع المعدة -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">سحب بار ع المعدة</span>
+                    <span class="exercise-number">4</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/8d1bf207211a3c3028aabb649ab4764e677da43c.png" alt="سحب بار" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">بار أولمبي (Barbell Row)</div>
+                    </div>
+                    <span class="muscle-tag">الظهر</span>
+                    <span class="muscle-tag">البايسبس</span>
+                </div>
+            </div>
+
+            <!-- 5. قطنية -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">قطنية</span>
+                    <span class="exercise-number">5</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/e77fa828c85dcdf297ae65e1a64c8eaa746909c3.png" alt="قطنية" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">جهاز الظهر القطني (Back Extension)</div>
+                    </div>
+                    <span class="muscle-tag">الظهر السفلي</span>
+                </div>
+            </div>
+
+            <!-- 6. حبل ع الجبهة -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">حبل ع الجبهة</span>
+                    <span class="exercise-number">6</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/9df2475a6e8af45358d8d2f94af027c3cd7bff89.png" alt="حبل ع الجبهة" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">جهاز كابل + حبل (Cable Face Pull)</div>
+                    </div>
+                    <span class="muscle-tag">الكتف الخلفي</span>
+                </div>
+            </div>
+
+            <!-- 7. حصان باي واسع -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">حصان باي واسع</span>
+                    <span class="exercise-number">7</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/images.squarespace-cdn.com/1bbce8f700236ef688dc887ea678040c1f590c81.jpeg" alt="حصان باي" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">بار أولمبي واسع (Wide Grip Barbell)</div>
+                    </div>
+                    <span class="muscle-tag">البايسبس</span>
+                </div>
+            </div>
+
+            <!-- 8. دامبل شكوش -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">دامبل شكوش</span>
+                    <span class="exercise-number">8</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/8533d61d82388d4c39fb3cf213a0a658106eca4a.png" alt="دامبل شكوش" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">دمبل (Dumbbell Hammer Curl)</div>
+                    </div>
+                    <span class="muscle-tag">البايسبس</span>
+                    <span class="muscle-tag">الساعد</span>
+                </div>
+            </div>
+
+            <!-- اليوم الرابع -->
+            <div class="day-divider" data-day="اليوم الرابع"></div>
+
+            <!-- 1. رجل -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">رجل</span>
+                    <span class="exercise-number">1</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/e77fa828c85dcdf297ae65e1a64c8eaa746909c3.png" alt="رجل" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">جهاز خلف الرجل (Leg Curl)</div>
+                    </div>
+                    <span class="muscle-tag">الأوتار</span>
+                    <span class="muscle-tag">الفخذ الخلفي</span>
+                </div>
+            </div>
+
+            <!-- 2. مقصات -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">مقصات</span>
+                    <span class="exercise-number">2</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/e77fa828c85dcdf297ae65e1a64c8eaa746909c3.png" alt="مقصات" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">بدون أجهزة (Scissors)</div>
+                    </div>
+                    <span class="muscle-tag">البطن السفلي</span>
+                </div>
+            </div>
+
+            <!-- 3. أمامي جهاز -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">أمامي جهاز</span>
+                    <span class="exercise-number">3</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/8d1bf207211a3c3028aabb649ab4764e677da43c.png" alt="أمامي جهاز" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">جهاز ضغط الصدر الأمامي (Chest Press)</div>
+                    </div>
+                    <span class="muscle-tag">الصدر</span>
+                </div>
+            </div>
+
+            <!-- 4. دفع 11 -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">دفع 11</span>
+                    <span class="exercise-number">4</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/8d1bf207211a3c3028aabb649ab4764e677da43c.png" alt="دفع 11" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">جهاز ضغط الصدر (Incline Press)</div>
+                    </div>
+                    <span class="muscle-tag">الصدر العلوي</span>
+                </div>
+            </div>
+
+            <!-- 5. خلفي جهاز -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">خلفي جهاز</span>
+                    <span class="exercise-number">5</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/9df2475a6e8af45358d8d2f94af027c3cd7bff89.png" alt="خلفي جهاز" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">جهاز سحب خلفي (Seated Row)</div>
+                    </div>
+                    <span class="muscle-tag">الظهر الأوسط</span>
+                </div>
+            </div>
+
+            <!-- 6. ضامة -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">ضامة</span>
+                    <span class="exercise-number">6</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/workoutlabs.com/fe3644d3b50835a6270e5b227797bc499da01eb2.png" alt="ضامة" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">جهاز فتحة الفخذ (Adductor Machine)</div>
+                    </div>
+                    <span class="muscle-tag">الفخذ الداخلي</span>
+                </div>
+            </div>
+
+            <!-- 7. اسكواد سبعة -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">اسكواد سبعة</span>
+                    <span class="exercise-number">7</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/e77fa828c85dcdf297ae65e1a64c8eaa746909c3.png" alt="اسكواد" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">بدون أجهزة / بار (Squat)</div>
+                    </div>
+                    <span class="muscle-tag">الفخذ</span>
+                    <span class="muscle-tag">الأرداف</span>
+                </div>
+            </div>
+
+            <!-- 8. سمانة -->
+            <div class="exercise-card">
+                <div class="exercise-header">
+                    <span class="exercise-name">سمانة</span>
+                    <span class="exercise-number">8</span>
+                </div>
+                <div class="exercise-content">
+                    <img src="https://kimi-web-img.moonshot.cn/img/weighttraining.guide/e77fa828c85dcdf297ae65e1a64c8eaa746909c3.png" alt="سمانة" class="exercise-image">
+                    <div class="equipment-section">
+                        <div class="equipment-label">🔧 الجهاز المستخدم:</div>
+                        <div class="equipment-name">جهاز السمانة (Calf Raise Machine)</div>
+                    </div>
+                    <span class="muscle-tag">السمانة</span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            <p class="footer-text">💪 استمرارية + صبر = نتائج مبهرة</p>
+                <div class="coach-name"> Abdallah El-Daly</div>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>
