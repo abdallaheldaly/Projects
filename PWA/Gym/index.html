@@ -7,9 +7,6 @@
     <meta name="description" content="نظام إدارة اشتراكات الجيم - Gym Management System">
     <title>Gym Pro - نظام إدارة الجيم</title>
     
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiR3ltIFBybyAtIE55c3RlbSBNYW5hZ2VtZW50Iiwic2hvcnRfbmFtZSI6Ikd5bSBQcm8iLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzFhMWEyZSIsInRoZW1lX2NvbG9yIjoiIzFhMWEyZSIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSEJ5WlhObGNuWmxRWE53WldOMFRtRnRaVDBpWVdJMWN6RXpNVFF3TURBaUlITnBlbVU5SWpFeUlpQjRiV3h1Y3pwamJSEklZWFpKYm1adklqMGlkWEpzS0dWNFlXMXdiR1VwSWlCemRIbHNaVDBpWlhKeWIzSWlJSFpwWlhkQ2IzZzlJakFnTUNBeE1DQXdJbjA9Iiwic2l6ZXMiOiIxOTJ4MTkyIiwidHlwZSI6ImltYWdlL3BuZyJ9XX0=">
-    
     <style>
         * {
             margin: 0;
@@ -26,11 +23,6 @@
             --success: #00d9ff;
             --warning: #ffc107;
             --danger: #ff4757;
-        }
-
-        @font-face {
-            font-family: 'Cairo';
-            src: url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
         }
 
         body {
@@ -270,6 +262,16 @@
 
         .btn-danger {
             background: var(--danger);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: var(--dark);
+        }
+
+        .btn-info {
+            background: #17a2b8;
             color: white;
         }
 
@@ -562,6 +564,43 @@
             background: var(--danger);
         }
 
+        /* Backup Section */
+        .backup-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            background: var(--warning);
+            color: var(--dark);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .file-input-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .header-stats {
@@ -580,6 +619,10 @@
             
             .form-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .backup-actions {
+                flex-direction: column;
             }
         }
 
@@ -600,7 +643,7 @@
 
         /* Print Styles */
         @media print {
-            .header, .nav-tabs, .btn, .member-actions {
+            .header, .nav-tabs, .btn, .member-actions, .backup-actions {
                 display: none !important;
             }
             
@@ -682,6 +725,29 @@
                 <div id="recentActivity" style="max-height: 300px; overflow-y: auto;">
                     <p style="text-align: center; color: #888; padding: 2rem;">لا توجد نشاطات حديثة</p>
                 </div>
+            </div>
+
+            <!-- Backup Section -->
+            <div class="card">
+                <div class="card-title">💾 النسخ الاحتياطي واستعادة البيانات</div>
+                <p style="margin-bottom: 1rem; color: #aaa;">
+                    احفظ نسخة من بياناتك كملف JSON لنقلها لجهاز آخر أو لاستعادتها لاحقاً
+                </p>
+                <div class="backup-actions">
+                    <button class="btn btn-success" onclick="exportData()">
+                        <span>💾</span> حفظ نسخة احتياطية
+                    </button>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="importFile" accept=".json" onchange="importData(this)">
+                        <label for="importFile" class="file-input-label">
+                            <span>📂</span> استرجاع نسخة سابقة
+                        </label>
+                    </div>
+                    <button class="btn btn-warning" onclick="autoSaveToFile()">
+                        <span>🔄</span> حفظ تلقائي في الملف
+                    </button>
+                </div>
+                <div id="autoSaveStatus" style="margin-top: 1rem; color: #888; font-size: 0.9rem;"></div>
             </div>
         </div>
 
@@ -789,10 +855,11 @@
     <div id="toast" class="toast"></div>
 
     <script>
-        // Data Management
-        let members = JSON.parse(localStorage.getItem('gymMembers')) || [];
-        let attendance = JSON.parse(localStorage.getItem('gymAttendance')) || {};
+        // Data Management - تخزين في الذاكرة فقط (لا localStorage)
+        let members = [];
+        let attendance = {};
         let currentFilter = 'all';
+        let dataModified = false;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -805,6 +872,14 @@
             // Set today's date as default
             document.getElementById('startDate').valueAsDate = new Date();
             calculateEndDate();
+
+            // تحذير عند الخروج إذا لم يتم حفظ البيانات
+            window.addEventListener('beforeunload', function(e) {
+                if (dataModified) {
+                    e.preventDefault();
+                    e.returnValue = 'لديك بيانات غير محفوظة! هل تريد الخروج؟';
+                }
+            });
         });
 
         // Navigation
@@ -868,8 +943,8 @@
                 members.push(member);
             }
 
-            localStorage.setItem('gymMembers', JSON.stringify(members));
-            showToast('تم حفظ البيانات بنجاح!', 'success');
+            dataModified = true;
+            showToast('تم حفظ البيانات في الذاكرة! لا تنسَ تصدير النسخة الاحتياطية', 'success');
             document.getElementById('addMemberForm').reset();
             
             // Reset dates
@@ -995,7 +1070,7 @@
 
             // Check if already marked today
             if (attendance[memberId].some(a => a.date === today)) {
-                showToast('تم تسجيل الحضور مسبقاً اليوم!', 'warning');
+                showToast('تم تسجيل الحضور مسبقاً اليوم!', 'error');
                 return;
             }
 
@@ -1005,8 +1080,8 @@
                 timestamp: now.toISOString()
             });
 
-            localStorage.setItem('gymAttendance', JSON.stringify(attendance));
-            showToast('تم تسجيل الحضور بنجاح!', 'success');
+            dataModified = true;
+            showToast('تم تسجيل الحضور! لا تنسَ تصدير النسخة الاحتياطية', 'success');
             
             // Show attendance details
             showAttendanceDetails(memberId);
@@ -1120,12 +1195,77 @@
             if (confirm('هل أنت متأكد من حذف هذا المشترك؟')) {
                 members = members.filter(m => m.id !== id);
                 delete attendance[id];
-                localStorage.setItem('gymMembers', JSON.stringify(members));
-                localStorage.setItem('gymAttendance', JSON.stringify(attendance));
+                dataModified = true;
                 renderMembers();
                 updateStats();
-                showToast('تم الحذف بنجاح', 'success');
+                showToast('تم الحذف! لا تنسَ تصدير النسخة الاحتياطية', 'success');
             }
+        }
+
+        // Export Data - تصدير البيانات لملف JSON
+        function exportData() {
+            const data = {
+                members: members,
+                attendance: attendance,
+                exportDate: new Date().toISOString(),
+                version: '1.0'
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            
+            // اسم الملف مع التاريخ
+            const dateStr = new Date().toISOString().split('T')[0];
+            link.download = `gym_backup_${dateStr}.json`;
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            dataModified = false;
+            showToast('تم تصدير النسخة الاحتياطية بنجاح!', 'success');
+        }
+
+        // Import Data - استيراد البيانات من ملف JSON
+        function importData(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (confirm(`هل تريد استرجاع النسخة الاحتياطية؟\nتاريخ النسخة: ${new Date(data.exportDate).toLocaleString('ar-EG')}\nعدد المشتركين: ${data.members.length}`)) {
+                        members = data.members || [];
+                        attendance = data.attendance || {};
+                        dataModified = true;
+                        
+                        updateStats();
+                        renderMembers();
+                        updateAttendanceSelect();
+                        showToast('تم استرجاع البيانات بنجاح!', 'success');
+                    }
+                } catch (error) {
+                    showToast('خطأ في قراءة الملف! تأكد من صحة الملف', 'error');
+                    console.error(error);
+                }
+            };
+            reader.readAsText(file);
+            
+            // إعادة تعيين input file للسماح باختيار نفس الملف مرة أخرى
+            input.value = '';
+        }
+
+        // Auto Save - حفظ تلقائي (محاكاة)
+        function autoSaveToFile() {
+            exportData();
+            document.getElementById('autoSaveStatus').textContent = 'آخر حفظ تلقائي: ' + new Date().toLocaleString('ar-EG');
         }
 
         // Update Statistics
@@ -1238,23 +1378,6 @@
             if (event.target === modal) {
                 closeModal();
             }
-        }
-
-        // PWA Service Worker Registration
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('data:text/javascript;base64,' + btoa(`
-                self.addEventListener('install', e => {
-                    e.waitUntil(self.skipWaiting());
-                });
-                self.addEventListener('activate', e => {
-                    e.waitUntil(self.clients.claim());
-                });
-                self.addEventListener('fetch', e => {
-                    e.respondWith(fetch(e.request).catch(() => {
-                        return new Response('Offline Mode');
-                    }));
-                });
-            `)).catch(() => console.log('SW registration skipped'));
         }
     </script>
 </body>
