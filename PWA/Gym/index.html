@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#1a1a2e">
     <meta name="description" content="نظام إدارة اشتراكات الجيم - Gym Management System">
     <title>Gym Pro - نظام إدارة الجيم</title>
-    
+
     <style>
         * {
             margin: 0;
@@ -601,28 +601,62 @@
             box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
         }
 
+        /* Save Status Indicator */
+        .save-status {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            background: rgba(0, 217, 255, 0.9);
+            color: var(--dark);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            z-index: 999;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .save-status.show {
+            display: flex;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .header-stats {
                 display: none;
             }
-            
+
             .nav-tabs {
                 flex-wrap: wrap;
             }
-            
+
             .nav-tab {
                 flex: 1 1 calc(50% - 0.25rem);
                 font-size: 0.9rem;
                 padding: 0.8rem;
             }
-            
+
             .form-grid {
                 grid-template-columns: 1fr;
             }
 
             .backup-actions {
                 flex-direction: column;
+            }
+
+            .save-status {
+                top: auto;
+                bottom: 80px;
+                left: 50%;
+                transform: translateX(-50%);
             }
         }
 
@@ -643,19 +677,26 @@
 
         /* Print Styles */
         @media print {
-            .header, .nav-tabs, .btn, .member-actions, .backup-actions {
+            .header, .nav-tabs, .btn, .member-actions, .backup-actions, .save-status {
                 display: none !important;
             }
-            
+
             .member-card {
                 break-inside: avoid;
                 page-break-inside: avoid;
             }
         }
     </style>
+<base target="_blank">
 </head>
 <body>
     <div class="bg-animation"></div>
+
+    <!-- Save Status Indicator -->
+    <div id="saveStatus" class="save-status">
+        <span>💾</span>
+        <span>تم الحفظ تلقائياً</span>
+    </div>
 
     <!-- Header -->
     <header class="header">
@@ -681,16 +722,16 @@
     <div class="container">
         <!-- Navigation -->
         <div class="nav-tabs">
-            <button class="nav-tab active" onclick="showSection('dashboard')">
+            <button class="nav-tab active" data-section="dashboard" onclick="showSection(this)">
                 <span>📊</span> لوحة التحكم
             </button>
-            <button class="nav-tab" onclick="showSection('addMember')">
+            <button class="nav-tab" data-section="addMember" onclick="showSection(this)">
                 <span>➕</span> إضافة مشترك
             </button>
-            <button class="nav-tab" onclick="showSection('members')">
+            <button class="nav-tab" data-section="members" onclick="showSection(this)">
                 <span>👥</span> قائمة المشتركين
             </button>
-            <button class="nav-tab" onclick="showSection('attendance')">
+            <button class="nav-tab" data-section="attendance" onclick="showSection(this)">
                 <span>✅</span> تسجيل الحضور
             </button>
         </div>
@@ -731,23 +772,25 @@
             <div class="card">
                 <div class="card-title">💾 النسخ الاحتياطي واستعادة البيانات</div>
                 <p style="margin-bottom: 1rem; color: #aaa;">
-                    احفظ نسخة من بياناتك كملف JSON لنقلها لجهاز آخر أو لاستعادتها لاحقاً
+                    يتم حفظ البيانات تلقائياً في المتصفح. يمكنك أيضاً تصدير نسخة JSON لنقلها لجهاز آخر.
                 </p>
                 <div class="backup-actions">
                     <button class="btn btn-success" onclick="exportData()">
-                        <span>💾</span> حفظ نسخة احتياطية
+                        <span>💾</span> تصدير JSON
                     </button>
                     <div class="file-input-wrapper">
                         <input type="file" id="importFile" accept=".json" onchange="importData(this)">
                         <label for="importFile" class="file-input-label">
-                            <span>📂</span> استرجاع نسخة سابقة
+                            <span>📂</span> استيراد JSON
                         </label>
                     </div>
-                    <button class="btn btn-warning" onclick="autoSaveToFile()">
-                        <span>🔄</span> حفظ تلقائي في الملف
+                    <button class="btn btn-danger" onclick="clearAllData()">
+                        <span>🗑️</span> مسح جميع البيانات
                     </button>
                 </div>
-                <div id="autoSaveStatus" style="margin-top: 1rem; color: #888; font-size: 0.9rem;"></div>
+                <div id="autoSaveStatus" style="margin-top: 1rem; color: #888; font-size: 0.9rem;">
+                    آخر حفظ: <span id="lastSaveTime">-</span>
+                </div>
             </div>
         </div>
 
@@ -804,7 +847,7 @@
             <div class="card">
                 <div class="card-title">👥 إدارة المشتركين</div>
                 <input type="text" class="search-box" id="searchMembers" placeholder="🔍 ابحث برقم الهاتف أو الاسم..." oninput="filterMembers()">
-                
+
                 <div style="margin-bottom: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
                     <button class="btn btn-sm btn-primary" onclick="filterByStatus('all')">الكل</button>
                     <button class="btn btn-sm btn-success" onclick="filterByStatus('active')">نشط</button>
@@ -855,56 +898,174 @@
     <div id="toast" class="toast"></div>
 
     <script>
-        // Data Management - تخزين في الذاكرة فقط (لا localStorage)
+        // Data Management - مع localStorage للحفظ التلقائي
+        const STORAGE_KEY = 'gymProData_v1';
         let members = [];
         let attendance = {};
         let currentFilter = 'all';
         let dataModified = false;
 
-        // Initialize
+        // Check LocalStorage Availability - التحقق من دعم المتصفح
+        function isLocalStorageAvailable() {
+            try {
+                const test = '__test__';
+                localStorage.setItem(test, test);
+                localStorage.removeItem(test);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // Initialize - تحميل البيانات عند بدء التشغيل
         document.addEventListener('DOMContentLoaded', function() {
+            if (!isLocalStorageAvailable()) {
+                showToast('تحذير: متصفحك لا يدعم حفظ البيانات!', 'error');
+            } else {
+                loadFromLocalStorage();
+            }
+
             updateStats();
             renderMembers();
             updateAttendanceSelect();
             setInterval(updateCurrentTime, 1000);
             updateCurrentTime();
-            
+
             // Set today's date as default
-            document.getElementById('startDate').valueAsDate = new Date();
+            setTodayDate();
             calculateEndDate();
 
-            // تحذير عند الخروج إذا لم يتم حفظ البيانات
-            window.addEventListener('beforeunload', function(e) {
-                if (dataModified) {
-                    e.preventDefault();
-                    e.returnValue = 'لديك بيانات غير محفوظة! هل تريد الخروج؟';
-                }
-            });
+            // حفظ تلقائي كل 30 ثانية
+            setInterval(autoSave, 30000);
         });
 
-        // Navigation
-        function showSection(sectionId) {
+        // Set Today Date - تعيين تاريخ اليوم
+        function setTodayDate() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            document.getElementById('startDate').value = yyyy + '-' + mm + '-' + dd;
+        }
+
+        // Load from LocalStorage - تحميل البيانات
+        function loadFromLocalStorage() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const data = JSON.parse(saved);
+
+                    // التحقق من صحة البيانات
+                    if (Array.isArray(data.members)) {
+                        members = data.members;
+                    }
+                    if (data.attendance && typeof data.attendance === 'object') {
+                        attendance = data.attendance;
+                    }
+
+                    const lastSave = data.lastSave ? new Date(data.lastSave) : null;
+                    if (lastSave && !isNaN(lastSave.getTime())) {
+                        document.getElementById('lastSaveTime').textContent = lastSave.toLocaleString('ar-EG');
+                    }
+
+                    showToast('تم تحميل البيانات المحفوظة!', 'success');
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showToast('خطأ في تحميل البيانات المحفوظة', 'error');
+                // إعادة تعيين البيانات في حالة الخطأ
+                members = [];
+                attendance = {};
+            }
+        }
+
+        // Save to LocalStorage - حفظ البيانات مع معالجة الأخطاء
+        function saveToLocalStorage() {
+            if (!isLocalStorageAvailable()) {
+                showToast('لا يمكن الحفظ: localStorage غير متوفر', 'error');
+                return false;
+            }
+
+            try {
+                const data = {
+                    members: members,
+                    attendance: attendance,
+                    lastSave: new Date().toISOString()
+                };
+
+                const dataStr = JSON.stringify(data);
+
+                // التحقق من حجم البيانات (5MB تقريباً)
+                if (dataStr.length > 5 * 1024 * 1024) {
+                    showToast('البيانات كبيرة جداً! قم بتصدير نسخة احتياطية', 'error');
+                    return false;
+                }
+
+                localStorage.setItem(STORAGE_KEY, dataStr);
+
+                document.getElementById('lastSaveTime').textContent = new Date().toLocaleString('ar-EG');
+                dataModified = false;
+
+                // إظهار مؤشر الحفظ
+                const status = document.getElementById('saveStatus');
+                status.classList.add('show');
+                setTimeout(() => status.classList.remove('show'), 2000);
+
+                return true;
+            } catch (error) {
+                console.error('Error saving data:', error);
+                if (error.name === 'QuotaExceededError') {
+                    showToast('مساحة التخزين ممتلئة! قم بتصدير وحذف بعض البيانات', 'error');
+                } else {
+                    showToast('خطأ في حفظ البيانات!', 'error');
+                }
+                return false;
+            }
+        }
+
+        // Auto Save - حفظ تلقائي
+        function autoSave() {
+            if (dataModified) {
+                saveToLocalStorage();
+            }
+        }
+
+        // Navigation - التنقل بين الأقسام (مصحح)
+        function showSection(clickedTab) {
+            const sectionId = clickedTab.getAttribute('data-section');
+
+            // إخفاء جميع الأقسام
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+
+            // إزالة النشاط من جميع الأزرار
             document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-            
+
+            // إظهار القسم المطلوب
             document.getElementById(sectionId).classList.add('active');
-            event.target.closest('.nav-tab').classList.add('active');
-            
+
+            // تفعيل الزر المضغوط
+            clickedTab.classList.add('active');
+
+            // تحديث المحتوى حسب القسم
             if (sectionId === 'members') renderMembers();
             if (sectionId === 'dashboard') updateStats();
             if (sectionId === 'attendance') updateAttendanceSelect();
         }
 
-        // Date Calculations
+        // Date Calculations - حسابات التاريخ
         function calculateEndDate() {
             const startDate = document.getElementById('startDate').value;
             const duration = parseInt(document.getElementById('duration').value) || 1;
-            
+
             if (startDate) {
                 const start = new Date(startDate);
                 const end = new Date(start);
                 end.setMonth(end.getMonth() + duration);
-                document.getElementById('endDate').value = end.toISOString().split('T')[0];
+
+                const yyyy = end.getFullYear();
+                const mm = String(end.getMonth() + 1).padStart(2, '0');
+                const dd = String(end.getDate()).padStart(2, '0');
+                document.getElementById('endDate').value = yyyy + '-' + mm + '-' + dd;
             }
         }
 
@@ -914,24 +1075,30 @@
             document.getElementById('remainingAmount').value = total - paid;
         }
 
-        // Save Member
+        // Save Member - حفظ مشترك جديد
         function saveMember(e) {
             e.preventDefault();
-            
+
             const member = {
                 id: Date.now(),
-                phone: document.getElementById('phone').value,
-                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value.trim(),
+                name: document.getElementById('name').value.trim(),
                 startDate: document.getElementById('startDate').value,
                 duration: parseInt(document.getElementById('duration').value),
                 endDate: document.getElementById('endDate').value,
-                totalAmount: parseFloat(document.getElementById('totalAmount').value),
-                paidAmount: parseFloat(document.getElementById('paidAmount').value),
-                remainingAmount: parseFloat(document.getElementById('remainingAmount').value),
+                totalAmount: parseFloat(document.getElementById('totalAmount').value) || 0,
+                paidAmount: parseFloat(document.getElementById('paidAmount').value) || 0,
+                remainingAmount: parseFloat(document.getElementById('remainingAmount').value) || 0,
                 createdAt: new Date().toISOString()
             };
 
-            // Check if phone exists
+            // التحقق من البيانات
+            if (!member.phone || !member.name || !member.startDate) {
+                showToast('الرجاء ملء جميع الحقول المطلوبة', 'error');
+                return;
+            }
+
+            // Check if phone exists - التحقق من وجود الرقم
             const existingIndex = members.findIndex(m => m.phone === member.phone);
             if (existingIndex !== -1) {
                 if (confirm('هذا الرقم مسجل مسبقاً. هل تريد تحديث البيانات؟')) {
@@ -944,26 +1111,29 @@
             }
 
             dataModified = true;
-            showToast('تم حفظ البيانات في الذاكرة! لا تنسَ تصدير النسخة الاحتياطية', 'success');
+            saveToLocalStorage(); // حفظ فوري
+            showToast('تم حفظ البيانات بنجاح!', 'success');
             document.getElementById('addMemberForm').reset();
-            
+
             // Reset dates
-            document.getElementById('startDate').valueAsDate = new Date();
+            setTodayDate();
             calculateEndDate();
-            
+
             updateStats();
         }
 
-        // Render Members
+        // Render Members - عرض قائمة المشتركين
         function renderMembers() {
             const container = document.getElementById('membersList');
-            const searchTerm = document.getElementById('searchMembers').value.toLowerCase();
-            
+            const searchTerm = (document.getElementById('searchMembers').value || '').toLowerCase();
+
             let filtered = members.filter(m => {
-                const matchesSearch = m.name.toLowerCase().includes(searchTerm) || 
-                                    m.phone.includes(searchTerm);
-                const isExpired = new Date(m.endDate) < new Date();
-                
+                const matchesSearch = (m.name && m.name.toLowerCase().includes(searchTerm)) || 
+                                    (m.phone && m.phone.includes(searchTerm));
+
+                const endDate = m.endDate ? new Date(m.endDate) : null;
+                const isExpired = endDate ? endDate < new Date() : false;
+
                 if (currentFilter === 'active') return matchesSearch && !isExpired;
                 if (currentFilter === 'expired') return matchesSearch && isExpired;
                 return matchesSearch;
@@ -975,25 +1145,26 @@
             }
 
             container.innerHTML = filtered.map(member => {
-                const isExpired = new Date(member.endDate) < new Date();
-                const daysLeft = Math.ceil((new Date(member.endDate) - new Date()) / (1000 * 60 * 60 * 24));
-                
+                const endDate = member.endDate ? new Date(member.endDate) : null;
+                const isExpired = endDate ? endDate < new Date() : false;
+                const daysLeft = endDate ? Math.ceil((endDate - new Date()) / (1000 * 60 * 60 * 24)) : 0;
+
                 return `
                     <div class="member-card ${isExpired ? 'expired' : ''}">
                         <div class="member-header">
                             <div>
-                                <div class="member-name">${member.name}</div>
-                                <div class="member-phone">📱 ${member.phone}</div>
+                                <div class="member-name">${member.name || 'غير معروف'}</div>
+                                <div class="member-phone">📱 ${member.phone || '-'}</div>
                             </div>
                             <span class="member-status ${isExpired ? 'status-expired' : 'status-active'}">
                                 ${isExpired ? 'منتهي' : 'نشط'}
                             </span>
                         </div>
-                        
+
                         <div class="member-details">
                             <div class="detail-item">
                                 <span class="detail-label">تاريخ الانتهاء</span>
-                                <span class="detail-value">${member.endDate}</span>
+                                <span class="detail-value">${member.endDate || '-'}</span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">الأيام المتبقية</span>
@@ -1004,15 +1175,15 @@
                             <div class="detail-item">
                                 <span class="detail-label">المبلغ المتبقي</span>
                                 <span class="detail-value" style="color: ${member.remainingAmount > 0 ? 'var(--warning)' : 'var(--success)'}">
-                                    ${member.remainingAmount} ج.م
+                                    ${member.remainingAmount || 0} ج.م
                                 </span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">المدة</span>
-                                <span class="detail-value">${member.duration} شهر</span>
+                                <span class="detail-value">${member.duration || 0} شهر</span>
                             </div>
                         </div>
-                        
+
                         <div class="member-actions">
                             <button class="btn btn-sm btn-success" onclick="quickAttendance(${member.id})">
                                 ✅ حضور
@@ -1029,7 +1200,7 @@
             }).join('');
         }
 
-        // Filter Functions
+        // Filter Functions - تصفية المشتركين
         function filterMembers() {
             renderMembers();
         }
@@ -1039,7 +1210,7 @@
             renderMembers();
         }
 
-        // Attendance Functions
+        // Attendance Functions - تسجيل الحضور
         function updateCurrentTime() {
             const now = new Date();
             const timeString = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
@@ -1048,8 +1219,13 @@
 
         function updateAttendanceSelect() {
             const select = document.getElementById('attendanceMember');
-            const activeMembers = members.filter(m => new Date(m.endDate) >= new Date());
-            
+            const now = new Date();
+
+            const activeMembers = members.filter(m => {
+                const endDate = m.endDate ? new Date(m.endDate) : null;
+                return endDate && endDate >= now;
+            });
+
             select.innerHTML = '<option value="">-- اختر مشترك --</option>' +
                 activeMembers.map(m => `<option value="${m.id}">${m.name} - ${m.phone}</option>`).join('');
         }
@@ -1063,7 +1239,7 @@
 
             const today = new Date().toISOString().split('T')[0];
             const now = new Date();
-            
+
             if (!attendance[memberId]) {
                 attendance[memberId] = [];
             }
@@ -1081,18 +1257,24 @@
             });
 
             dataModified = true;
-            showToast('تم تسجيل الحضور! لا تنسَ تصدير النسخة الاحتياطية', 'success');
-            
-            // Show attendance details
+            saveToLocalStorage(); // حفظ فوري
+            showToast('تم تسجيل الحضور بنجاح!', 'success');
+
             showAttendanceDetails(memberId);
             updateStats();
         }
 
         function quickAttendance(memberId) {
             document.getElementById('attendanceMember').value = memberId;
-            showSection('attendance');
-            document.querySelectorAll('.nav-tab')[3].classList.add('active');
-            document.querySelectorAll('.nav-tab')[0].classList.remove('active');
+
+            // الانتقال لقسم الحضور
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+
+            document.getElementById('attendance').classList.add('active');
+            document.querySelector('[data-section="attendance"]').classList.add('active');
+
+            updateAttendanceSelect();
             showAttendanceDetails(memberId);
         }
 
@@ -1101,18 +1283,19 @@
             if (!member) return;
 
             document.getElementById('attendanceDetails').style.display = 'block';
-            
+
             // Calendar view
             const calendar = document.getElementById('attendanceCalendar');
-            const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+            const now = new Date();
+            const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
             const memberAttendance = attendance[memberId] || [];
-            
+
             let calendarHTML = '';
             for (let i = 1; i <= daysInMonth; i++) {
-                const dateStr = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
                 const isPresent = memberAttendance.some(a => a.date === dateStr);
-                const isToday = dateStr === new Date().toISOString().split('T')[0];
-                
+                const isToday = dateStr === now.toISOString().split('T')[0];
+
                 calendarHTML += `
                     <div class="calendar-day ${isPresent ? 'present' : ''} ${isToday ? 'today' : ''}" 
                          title="${isPresent ? 'حاضر' : 'غائب'}">
@@ -1144,25 +1327,26 @@
             }
         });
 
-        // View Member Details
+        // View Member Details - عرض تفاصيل المشترك
         function viewMember(id) {
             const member = members.find(m => m.id === id);
             if (!member) return;
 
-            const isExpired = new Date(member.endDate) < new Date();
+            const endDate = member.endDate ? new Date(member.endDate) : null;
+            const isExpired = endDate ? endDate < new Date() : false;
             const memberAttendance = attendance[id] || [];
             const presentDays = memberAttendance.length;
 
             document.getElementById('modalBody').innerHTML = `
                 <div style="margin-bottom: 1.5rem;">
-                    <h2 style="color: var(--primary); margin-bottom: 0.5rem;">${member.name}</h2>
-                    <p style="color: #888;">${member.phone}</p>
+                    <h2 style="color: var(--primary); margin-bottom: 0.5rem;">${member.name || 'غير معروف'}</h2>
+                    <p style="color: #888;">${member.phone || '-'}</p>
                 </div>
-                
+
                 <div style="display: grid; gap: 1rem; margin-bottom: 1.5rem;">
                     <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px;">
                         <div style="color: #888; font-size: 0.9rem;">تاريخ الاشتراك</div>
-                        <div>${member.startDate} إلى ${member.endDate}</div>
+                        <div>${member.startDate || '-'} إلى ${member.endDate || '-'}</div>
                     </div>
                     <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px;">
                         <div style="color: #888; font-size: 0.9rem;">الحالة</div>
@@ -1172,17 +1356,17 @@
                     </div>
                     <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px;">
                         <div style="color: #888; font-size: 0.9rem;">المبالغ المالية</div>
-                        <div>الإجمالي: ${member.totalAmount} ج.م | مدفوع: ${member.paidAmount} | متبقي: ${member.remainingAmount}</div>
+                        <div>الإجمالي: ${member.totalAmount || 0} ج.م | مدفوع: ${member.paidAmount || 0} | متبقي: ${member.remainingAmount || 0}</div>
                     </div>
                     <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px;">
                         <div style="color: #888; font-size: 0.9rem;">أيام الحضور</div>
                         <div style="font-size: 1.5rem; color: var(--success); font-weight: bold;">${presentDays} يوم</div>
                     </div>
                 </div>
-                
+
                 <button class="btn btn-primary" onclick="closeModal()" style="width: 100%;">إغلاق</button>
             `;
-            
+
             document.getElementById('memberModal').classList.add('active');
         }
 
@@ -1190,19 +1374,43 @@
             document.getElementById('memberModal').classList.remove('active');
         }
 
-        // Delete Member
+        // Delete Member - حذف مشترك
         function deleteMember(id) {
             if (confirm('هل أنت متأكد من حذف هذا المشترك؟')) {
                 members = members.filter(m => m.id !== id);
                 delete attendance[id];
                 dataModified = true;
+                saveToLocalStorage(); // حفظ فوري
                 renderMembers();
                 updateStats();
-                showToast('تم الحذف! لا تنسَ تصدير النسخة الاحتياطية', 'success');
+                showToast('تم الحذف بنجاح!', 'success');
             }
         }
 
-        // Export Data - تصدير البيانات لملف JSON
+        // Clear All Data - مسح جميع البيانات
+        function clearAllData() {
+            const msg1 = '⚠️ هل أنت متأكد من مسح جميع البيانات؟';
+            const msg2 = 'لا يمكن التراجع عن هذا الإجراء!';
+
+            if (confirm(msg1 + ' ' + msg2)) {
+                if (confirm('تأكيد نهائي: هل تريد حقاً مسح كل البيانات؟')) {
+                    members = [];
+                    attendance = {};
+                    dataModified = true;
+
+                    if (isLocalStorageAvailable()) {
+                        localStorage.removeItem(STORAGE_KEY);
+                    }
+
+                    updateStats();
+                    renderMembers();
+                    updateAttendanceSelect();
+                    showToast('تم مسح جميع البيانات!', 'success');
+                }
+            }
+        }
+
+        // Export Data - تصدير JSON
         function exportData() {
             const data = {
                 members: members,
@@ -1210,108 +1418,123 @@
                 exportDate: new Date().toISOString(),
                 version: '1.0'
             };
-            
+
             const dataStr = JSON.stringify(data, null, 2);
             const dataBlob = new Blob([dataStr], {type: 'application/json'});
-            
+
             const url = URL.createObjectURL(dataBlob);
             const link = document.createElement('a');
             link.href = url;
-            
-            // اسم الملف مع التاريخ
+
             const dateStr = new Date().toISOString().split('T')[0];
             link.download = `gym_backup_${dateStr}.json`;
-            
+
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
-            
-            dataModified = false;
+
             showToast('تم تصدير النسخة الاحتياطية بنجاح!', 'success');
         }
 
-        // Import Data - استيراد البيانات من ملف JSON
+        // Import Data - استيراد JSON
         function importData(input) {
             const file = input.files[0];
             if (!file) return;
-            
+
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const data = JSON.parse(e.target.result);
-                    
-                    if (confirm(`هل تريد استرجاع النسخة الاحتياطية؟\nتاريخ النسخة: ${new Date(data.exportDate).toLocaleString('ar-EG')}\nعدد المشتركين: ${data.members.length}`)) {
+
+                    if (!data.members || !Array.isArray(data.members)) {
+                        throw new Error('Invalid data format');
+                    }
+
+                    const exportDate = data.exportDate ? new Date(data.exportDate).toLocaleString('ar-EG') : 'غير معروف';
+                    const msg = 'هل تريد استيراد البيانات؟' + ' ' +
+                                'تاريخ النسخة: ' + exportDate + ' ' +
+                                'عدد المشتركين: ' + data.members.length + ' ' +
+                                '⚠️ سيتم استبدال البيانات الحالية!';
+
+                    if (confirm(msg)) {
                         members = data.members || [];
                         attendance = data.attendance || {};
                         dataModified = true;
-                        
+                        saveToLocalStorage(); // حفظ فوري بعد الاستيراد
+
                         updateStats();
                         renderMembers();
                         updateAttendanceSelect();
-                        showToast('تم استرجاع البيانات بنجاح!', 'success');
+                        showToast('تم استيراد البيانات بنجاح!', 'success');
                     }
                 } catch (error) {
+                    console.error('Import error:', error);
                     showToast('خطأ في قراءة الملف! تأكد من صحة الملف', 'error');
-                    console.error(error);
                 }
             };
+
+            reader.onerror = function() {
+                showToast('خطأ في قراءة الملف!', 'error');
+            };
+
             reader.readAsText(file);
-            
-            // إعادة تعيين input file للسماح باختيار نفس الملف مرة أخرى
             input.value = '';
         }
 
-        // Auto Save - حفظ تلقائي (محاكاة)
-        function autoSaveToFile() {
-            exportData();
-            document.getElementById('autoSaveStatus').textContent = 'آخر حفظ تلقائي: ' + new Date().toLocaleString('ar-EG');
-        }
-
-        // Update Statistics
+        // Update Statistics - تحديث الإحصائيات
         function updateStats() {
             const now = new Date();
             const today = now.toISOString().split('T')[0];
-            
+
             // Basic counts
             document.getElementById('totalMembers').textContent = members.length;
-            
-            const activeCount = members.filter(m => new Date(m.endDate) >= now).length;
+
+            const activeCount = members.filter(m => {
+                const endDate = m.endDate ? new Date(m.endDate) : null;
+                return endDate && endDate >= now;
+            }).length;
             document.getElementById('activeMembers').textContent = activeCount;
-            
+
             // Today's attendance
             let todayCount = 0;
             Object.values(attendance).forEach(arr => {
-                if (arr.some(a => a.date === today)) todayCount++;
+                if (Array.isArray(arr) && arr.some(a => a.date === today)) todayCount++;
             });
             document.getElementById('todayAttendance').textContent = todayCount;
-            
+
             // Financial stats
-            const totalRevenue = members.reduce((sum, m) => sum + m.paidAmount, 0);
+            const totalRevenue = members.reduce((sum, m) => sum + (m.paidAmount || 0), 0);
             document.getElementById('totalRevenue').textContent = totalRevenue.toLocaleString();
-            
+
             // Expiring soon (7 days)
             const expiringSoon = members.filter(m => {
-                const daysLeft = Math.ceil((new Date(m.endDate) - now) / (1000 * 60 * 60 * 24));
+                const endDate = m.endDate ? new Date(m.endDate) : null;
+                if (!endDate) return false;
+                const daysLeft = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
                 return daysLeft > 0 && daysLeft <= 7;
             }).length;
             document.getElementById('expiringSoon').textContent = expiringSoon;
-            
+
             // Expired
-            const expired = members.filter(m => new Date(m.endDate) < now).length;
+            const expired = members.filter(m => {
+                const endDate = m.endDate ? new Date(m.endDate) : null;
+                return endDate && endDate < now;
+            }).length;
             document.getElementById('expiredCount').textContent = expired;
-            
+
             // Monthly revenue
             const currentMonth = now.getMonth();
             const currentYear = now.getFullYear();
             const monthlyRevenue = members
                 .filter(m => {
+                    if (!m.createdAt) return false;
                     const d = new Date(m.createdAt);
                     return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
                 })
-                .reduce((sum, m) => sum + m.paidAmount, 0);
+                .reduce((sum, m) => sum + (m.paidAmount || 0), 0);
             document.getElementById('monthlyRevenue').textContent = monthlyRevenue.toLocaleString();
-            
+
             // Recent activity
             updateRecentActivity();
         }
@@ -1319,38 +1542,42 @@
         function updateRecentActivity() {
             const container = document.getElementById('recentActivity');
             const activities = [];
-            
+
             // Add recent members
             members.slice(-5).reverse().forEach(m => {
-                activities.push({
-                    date: new Date(m.createdAt),
-                    text: `تم تسجيل مشترك جديد: ${m.name}`,
-                    type: 'new'
-                });
-            });
-            
-            // Add recent attendance
-            Object.entries(attendance).forEach(([memberId, records]) => {
-                const member = members.find(m => m.id == memberId);
-                if (member) {
-                    records.slice(-3).forEach(r => {
-                        activities.push({
-                            date: new Date(r.timestamp),
-                            text: `حضور: ${member.name}`,
-                            type: 'attendance'
-                        });
+                if (m.createdAt) {
+                    activities.push({
+                        date: new Date(m.createdAt),
+                        text: 'تم تسجيل مشترك جديد: ' + (m.name || 'غير معروف'),
+                        type: 'new'
                     });
                 }
             });
-            
+
+            // Add recent attendance
+            Object.entries(attendance).forEach(([memberId, records]) => {
+                const member = members.find(m => m.id == memberId);
+                if (member && Array.isArray(records)) {
+                    records.slice(-3).forEach(r => {
+                        if (r.timestamp) {
+                            activities.push({
+                                date: new Date(r.timestamp),
+                                text: 'حضور: ' + (member.name || 'غير معروف'),
+                                type: 'attendance'
+                            });
+                        }
+                    });
+                }
+            });
+
             // Sort by date
             activities.sort((a, b) => b.date - a.date);
-            
+
             if (activities.length === 0) {
                 container.innerHTML = '<p style="text-align: center; color: #888; padding: 2rem;">لا توجد نشاطات حديثة</p>';
                 return;
             }
-            
+
             container.innerHTML = activities.slice(0, 10).map(a => `
                 <div style="padding: 1rem; background: rgba(255,255,255,0.05); margin-bottom: 0.5rem; border-radius: 8px; border-right: 3px solid ${a.type === 'new' ? 'var(--primary)' : 'var(--success)'};">
                     <div style="font-size: 0.8rem; color: #888; margin-bottom: 0.3rem;">
@@ -1361,12 +1588,12 @@
             `).join('');
         }
 
-        // Toast Notification
-        function showToast(message, type = 'success') {
+        // Toast Notification - إشعارات
+        function showToast(message, type) {
             const toast = document.getElementById('toast');
             toast.textContent = message;
-            toast.className = `toast ${type} show`;
-            
+            toast.className = 'toast ' + (type || 'success') + ' show';
+
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
