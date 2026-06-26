@@ -1,4 +1,4 @@
-from django.db.models import F, Q
+from django.db.models import F, Q, FloatField, ExpressionWrapper
 from django.db.models.functions import math
 from django.shortcuts import get_object_or_404, render
 from rest_framework import status
@@ -6,10 +6,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import User, Flock
 from .serializers import UserSerializer, FlockSerializer, MessageSerializer
-from django.http import HttpResponse
+
 
 def privacy_policyview(request):
-      return render(request,"privacy_policy.html")
+    return render(request, "privacy_policy.html")
+
 
 class UserList(APIView):
     def post(self, request):
@@ -44,17 +45,44 @@ class FlockList(APIView):
             serializer = FlockSerializer([], many=True)
             return Response(serializer.data)
 
-        q = Flock.objects.annotate(distence=math.Sqrt((F('latitude')-lat) ** 2 + (F('longitude')-lng) ** 2))
-        flocks = q.filter(Q(distence__lte=0.05) & (Q(status='C') | Q(status='S')))
+        try:
+            lat = float(lat)
+            lng = float(lng)
+        except ValueError:
+            return Response(
+                {'detail': 'lat and lng must be numbers.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # `latitude`/`longitude` are DecimalField columns, while `lat`/`lng`
+        # are plain Python floats parsed from query params. Django can't
+        # infer a common type for that subtraction on its own, so we wrap
+        # the expression with an explicit output_field.
+        distance_squared = ExpressionWrapper(
+            (F('latitude') - lat) ** 2 + (F('longitude') - lng) ** 2,
+            output_field=FloatField(),
+        )
+        flocks = (
+            Flock.objects
+            .annotate(distance_squared=distance_squared)
+            .annotate(distance=math.Sqrt('distance_squared'))
+            .filter(Q(distance__lte=0.05) & (Q(status='C') | Q(status='S')))
+        )
         serializer = FlockSerializer(flocks, many=True)
         return Response(serializer.data)
 
     def post(self, request):
+        if not request.data.get('password'):
+            return Response(
+                {'password': ['This field is required.']},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         serializer = FlockSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
 
-            flock = Flock.objects.get(pk=serializer.data['id']);
+            flock = Flock.objects.get(pk=serializer.data['id'])
             user = User.objects.get(pk=serializer.data['leader'])
             flock.members.add(user)
 
@@ -88,15 +116,24 @@ class MemberDetail(APIView):
     def post(self, request, pk, member_id):
         flock = get_object_or_404(Flock, pk=pk)
         user = get_object_or_404(User, pk=member_id)
+
+        # The flock leader is added automatically when the flock is created
+        # (see FlockList.post) and doesn't need to re-supply the password.
+        if user.id != flock.leader_id:
+            password = request.data.get('password') if request.data else None
+            if password != flock.password:
+                return Response(
+                    {'detail': 'Incorrect flock password.'},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
         flock.members.add(user)
-        flock.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, pk, member_id):
         flock = get_object_or_404(Flock, pk=pk)
         user = get_object_or_404(User, pk=member_id)
         flock.members.remove(user)
-        flock.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

@@ -82,6 +82,7 @@ class _RegisterPage extends State<RegisterPage> {
         Phoenix.rebirth(context);
       }
       catch (ex) {
+        context.loaderOverlay.hide();
         showAlert(context, ex, "Registration failed");
       }
     }

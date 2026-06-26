@@ -21,6 +21,9 @@ class Flock {
         title = json['title'] as String,
         description = json['description'] as String,
         status = json['status'] as String,
+        // The backend never returns the password (it's write_only), so this
+        // will normally be null here. We only ever read it back off a Flock
+        // we created ourselves in this session (see createFlock below).
         password = json['password'] as String,
         destination = json['destination'] as String,
         latitude = double.tryParse(json['latitude'] ?? ""),
@@ -78,26 +81,32 @@ Future<Flock> createFlock(
     double longitude,
     int leaderId,
     ) async {
-  final String json = '{'
-      '"title": "$title", '
-      '"destination": "$destination", '
-      '"password": "$password", '
-      '"latitude": "$latitude", '
-      '"longitude": "$longitude", '
-      '"leader": $leaderId}';
-  final String res = await httpPost('flocks/', json);
-  return parseFlock(res);
+  final String body = json.encode({
+    'title': title,
+    'destination': destination,
+    'password': password,
+    'latitude': latitude.toString(),
+    'longitude': longitude.toString(),
+    'leader': leaderId,
+  });
+  final String res = await httpPost('flocks/', body);
+  final Flock flock = parseFlock(res);
+  // The backend never echoes the password back (it's write_only), so keep
+  // hold of the value the leader just chose for later use (e.g. showing it
+  // again, or re-sending it on a future join from this same device).
+  flock.password = password;
+  return flock;
 }
 
 Future updateFlock(Flock flock) async {
-  final String json = '{'
-      '"id": ${flock.id}, '
-      '"title": "${flock.title}", '
-      '"destination": "${flock.destination}", '
-      '"password": "${flock.password}", '
-      '"latitude": "${flock.latitude}", '
-      '"longitude": "${flock.longitude}", '
-      '"status": "${flock.status}", '
-      '"leader": ${flock.leaderId}}';
-  await httpPut('flocks/${flock.id}/', json);
+  final String body = json.encode({
+    'id': flock.id,
+    'title': flock.title,
+    'destination': flock.destination,
+    'latitude': flock.latitude.toString(),
+    'longitude': flock.longitude.toString(),
+    'status': flock.status,
+    'leader': flock.leaderId,
+  });
+  await httpPut('flocks/${flock.id}/', body);
 }

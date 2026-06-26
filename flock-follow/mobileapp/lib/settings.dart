@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
 import 'data/app_status.dart';
@@ -97,8 +96,8 @@ class _SettingsPage extends State<SettingsPage> {
         Navigator.pop(context);
       }
       catch (ex) {
-        showAlert(context, ex, "Update settings failed");
-        Phoenix.rebirth(context);
+        context.loaderOverlay.hide();
+        await showAlert(context, ex, "Update settings failed");
       }
     }
   }

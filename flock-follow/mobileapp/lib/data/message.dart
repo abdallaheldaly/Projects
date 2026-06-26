@@ -4,21 +4,21 @@ import 'package:flock_follow/data/backend.dart';
 class Message {
   int id;
   String content;
-  DateTime date_time;
-  int user_id;
-  int flock_id;
+  DateTime createdAt;
+  int userId;
+  int flockId;
 
   Message.fromJson(Map<String, dynamic> json)
       : id = json['id'] as int,
         content = json['content'] as String,
-        date_time = json['date_time'] as DateTime,
-        user_id = json['user_id'] as int,
-        flock_id = json['flock_id'] as int;
+        createdAt = DateTime.tryParse(json['created_at'] ?? ""),
+        userId = json['user'] as int,
+        flockId = json['flock'] as int;
 }
 
-Future<Message> readMessage(flockId, userId) async {
-  final String data = await httpGet("flocks/$flockId/members/$userId/");
-  return parseMessage(data);
+Future<List<Message>> getFlockMessages(int flockId) async {
+  final String data = await httpGet('flocks/$flockId/messages/');
+  return parseMessages(data);
 }
 
 Message parseMessage(String responseText) {
@@ -30,12 +30,20 @@ Message parseMessage(String responseText) {
   return Message.fromJson(responseJson);
 }
 
-Future<Message> createMessage(
-    String content, DateTime dateTime, int userId, int flockId) async {
-  final String json = '{"content": "$content"}';
-  final DateTime = '{"date_time": "$dateTime"}';
-  final int = '{"user_id": "$userId", "flock_id": "$flockId"}';
-  final String res =
-      await httpPost('flocks/$flockId/members/$userId/', json);
+List<Message> parseMessages(String responseText) {
+  if (responseText == null || responseText.isEmpty) {
+    return null;
+  }
+
+  final List responseJson = json.decode(responseText);
+  return responseJson.map((jsonObject) => Message.fromJson(jsonObject)).toList();
+}
+
+Future<Message> createMessage(int flockId, int userId, String content) async {
+  final String body = json.encode({
+    'content': content,
+    'user': userId,
+  });
+  final String res = await httpPost('flocks/$flockId/messages/', body);
   return parseMessage(res);
 }

@@ -58,5 +58,8 @@ class Message(models.Model):
     user = models.ForeignKey(User, related_name='messages', on_delete=models.CASCADE)
     flock = models.ForeignKey(Flock, related_name='messages', on_delete=models.CASCADE)
 
+    class Meta:
+        ordering = ['created_at']
+
     def __str__(self):
         return f'[{self.id}]: {self.content[:20]}'

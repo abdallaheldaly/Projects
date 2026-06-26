@@ -70,22 +70,24 @@ Future<User> createUser(
     String phone,
     double latitude,
     double longitude) async {
-  final String json = '{'
-      '"name": "$name", '
-      '"phone": "$phone", '
-      '"latitude": "$latitude", '
-      '"longitude": "$longitude"}';
-  final String res = await httpPost('users/', json);
+  final String body = json.encode({
+    'name': name,
+    'phone': phone,
+    'latitude': latitude.toString(),
+    'longitude': longitude.toString(),
+  });
+  final String res = await httpPost('users/', body);
   return parseUser(res);
 }
 
 Future updateUser(User user) async {
-  final String json = '{'
-      '"id": ${user.id}, '
-      '"name": "${user.name}", '
-      '"about": "${user.about}", '
-      '"phone": "${user.phone}", '
-      '"latitude": "${user.latitude}", '
-      '"longitude": "${user.longitude}"}';
-  await httpPut('users/${user.id}/', json);
+  final String body = json.encode({
+    'id': user.id,
+    'name': user.name,
+    'about': user.about,
+    'phone': user.phone,
+    'latitude': user.latitude.toString(),
+    'longitude': user.longitude.toString(),
+  });
+  await httpPut('users/${user.id}/', body);
 }

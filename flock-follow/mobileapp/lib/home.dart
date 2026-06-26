@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
+import 'data/backend.dart';
 import 'data/flock.dart';
 import 'data/member.dart';
 import 'data/user_location.dart';
@@ -109,12 +109,24 @@ class _HomePage extends State<HomePage> {
     );
     if (pwd == null || pwd == "")
       return;
-    if (pwd != flock.password) {
-      await showAlert(context, "Wrong password!", "Join Failed");
-      return;
-    }
-    await joinFlock(flock.id, widget.appStatus.user.id);
 
-    Phoenix.rebirth(context);
+    try {
+      context.loaderOverlay.show();
+      await joinFlock(flock.id, widget.appStatus.user.id, pwd);
+      context.loaderOverlay.hide();
+      Phoenix.rebirth(context);
+    }
+    on HttpException catch (ex) {
+      context.loaderOverlay.hide();
+      if (ex.statusCode == 403) {
+        await showAlert(context, "Wrong password!", "Join Failed");
+      } else {
+        await showAlert(context, ex, "Join Failed");
+      }
+    }
+    catch (ex) {
+      context.loaderOverlay.hide();
+      await showAlert(context, ex, "Join Failed");
+    }
   }
 }

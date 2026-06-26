@@ -22,17 +22,25 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '#2a1bt)xhni9etp$-nx#x9@-=t+$2v#5el7%9zxc4==3$g*-wq'
+# Never commit a real secret key. Provide one via the DJANGO_SECRET_KEY
+# environment variable in every real deployment; the fallback below is only
+# for quick local experimentation and is NOT safe for production use.
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    'insecure-local-dev-key-do-not-use-in-production',
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Defaults to False; set DJANGO_DEBUG=true for local development.
+DEBUG = os.environ.get('DJANGO_DEBUG', 'false').lower() == 'true'
 
+# Comma-separated list of allowed hosts, e.g. "flock-follow.live,localhost".
+# Defaults to the production host so existing deployments keep working
+# without extra configuration.
 ALLOWED_HOSTS = [
-    'flock-follow.live',
-#     '0.0.0.0',
-#     'localhost', '127.0.0.1',  # localhost
-#     '10.0.2.2',  # emulator
-#     '192.168.0.1',
+    host.strip()
+    for host in os.environ.get('DJANGO_ALLOWED_HOSTS', 'flock-follow.live').split(',')
+    if host.strip()
 ]
 
 
@@ -65,6 +73,19 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# NOTE: `rest_framework_api_key` and `rest_auth` are installed but no
+# DEFAULT_PERMISSION_CLASSES/DEFAULT_AUTHENTICATION_CLASSES are configured,
+# so every API endpoint below is currently open to anonymous read/write
+# access. This is left as-is here (changing it is a product decision about
+# how the mobile app should authenticate), but it should be addressed before
+# this API is exposed publicly — e.g. by requiring an API key on every
+# request via DEFAULT_PERMISSION_CLASSES / DEFAULT_AUTHENTICATION_CLASSES.
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+}
 
 ROOT_URLCONF = 'flock_follow.urls'
 

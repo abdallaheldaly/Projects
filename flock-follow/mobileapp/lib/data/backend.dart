@@ -1,5 +1,15 @@
 import 'package:http/http.dart' as http;
 
+class HttpException implements Exception {
+  final int statusCode;
+  final String body;
+
+  HttpException(this.statusCode, this.body);
+
+  @override
+  String toString() => 'HTTP $statusCode: $body';
+}
+
 Uri buildUrl(String subUrl, [Map<String, String> queryParams]) {
   return Uri.https("flock-follow.live", "/api/v1/$subUrl", queryParams);
 }
@@ -9,7 +19,7 @@ Future<String> httpGet(String subUrl, [Map<String, String> queryParams]) async {
   if (response.statusCode == 200) {
     return response.body;
   } else {
-    throw Exception('Failed to GET data');
+    throw HttpException(response.statusCode, response.body);
   }
 }
 
@@ -21,7 +31,7 @@ Future<String> httpPost(String subUrl, data) async {
   if ([200, 201, 204].contains(response.statusCode)) {
     return response.body;
   } else {
-    throw Exception('Failed to POST data');
+    throw HttpException(response.statusCode, response.body);
   }
 }
 
@@ -33,7 +43,7 @@ Future<String> httpPut(String subUrl, data) async {
   if (response.statusCode == 200) {
     return response.body;
   } else {
-    throw Exception('Failed to PUT data');
+    throw HttpException(response.statusCode, response.body);
   }
 }
 
@@ -42,6 +52,6 @@ Future<String> httpDelete(String subUrl) async {
   if ([200, 204].contains(response.statusCode)) {
     return response.body;
   } else {
-    throw Exception('Failed to DELETE data');
+    throw HttpException(response.statusCode, response.body);
   }
 }

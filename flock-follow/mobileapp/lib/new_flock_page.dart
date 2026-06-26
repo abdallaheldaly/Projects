@@ -90,6 +90,7 @@ class _NewFlockPage extends State<NewFlockPage> {
         Phoenix.rebirth(context);
       }
       catch (ex) {
+        context.loaderOverlay.hide();
         showAlert(context, ex, "Creating new flock failed");
       }
     }

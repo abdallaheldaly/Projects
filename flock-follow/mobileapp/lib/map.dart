@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -11,6 +10,7 @@ import 'data/member.dart';
 import 'data/user.dart';
 import 'data/flock.dart';
 import 'members.dart';
+import 'messages.dart';
 
 
 class MapPage extends StatefulWidget {
@@ -26,11 +26,18 @@ class _MapPage extends State<MapPage> {
   List<User> members = [];
   Location _location = Location();
   GoogleMapController _controller;
+  StreamSubscription<LocationData> _locationSubscription;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => subscribeToUserLocation());
+  }
+
+  @override
+  void dispose() {
+    _locationSubscription?.cancel();
+    super.dispose();
   }
 
   @override
@@ -45,6 +52,8 @@ class _MapPage extends State<MapPage> {
                 await leave();
               else if (item == "/members")
                 await openMembers();
+              else if (item == "/messages")
+                await openMessages();
               else if (item == "/advance")
                 await advanceFlockStatus();
             },
@@ -58,6 +67,10 @@ class _MapPage extends State<MapPage> {
               PopupMenuItem<String>(
                 value: "/members",
                 child: Text('Members'),
+              ),
+              PopupMenuItem<String>(
+                value: "/messages",
+                child: Text('Messages'),
               ),
               PopupMenuItem<String>(
                 value: "/advance",
@@ -105,7 +118,7 @@ class _MapPage extends State<MapPage> {
   }
 
   void subscribeToUserLocation() {
-    _location.onLocationChanged.listen(updateLocation);
+    _locationSubscription = _location.onLocationChanged.listen(updateLocation);
   }
 
   Future updateLocation(LocationData currentLocation) async {
@@ -117,7 +130,9 @@ class _MapPage extends State<MapPage> {
     print('Position: ${currentLocation.latitude}, ${currentLocation.longitude}');
 
     await updateUserLocation(currentLocation);
+    if (!mounted) return;
     await updateFlockLocation(currentLocation);
+    if (!mounted) return;
     await loadMemberLocations();
   }
 
@@ -137,6 +152,7 @@ class _MapPage extends State<MapPage> {
 
   Future loadMemberLocations() async {
     final data = await getFlockMembers(widget.appStatus.flock.id);
+    if (!mounted) return;
     setState(() => members = data);
   }
 
@@ -150,6 +166,12 @@ class _MapPage extends State<MapPage> {
   openMembers() {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => MembersPage(widget.appStatus)),
+    );
+  }
+
+  openMessages() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => MessagesPage(widget.appStatus)),
     );
   }
 

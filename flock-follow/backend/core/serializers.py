@@ -24,6 +24,16 @@ class FlockSerializer(serializers.ModelSerializer):
             'created_at', 'started_at', 'finished_at',
             'leader',
         ]
+        # The password is used to gate joining a flock - it must never be
+        # readable in API responses (e.g. when listing nearby flocks or
+        # fetching flock details), only settable when creating one.
+        # It's not `required` here because updates (e.g. starting/finishing
+        # a flock) re-send the whole Flock object but the client never has
+        # the password after creation; FlockList.post enforces that it's
+        # actually provided when a flock is first created.
+        extra_kwargs = {
+            'password': {'write_only': True, 'required': False},
+        }
 
 
 class MessageSerializer(serializers.ModelSerializer):
