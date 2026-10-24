@@ -1,0 +1,142 @@
+/* Plus links page
+   Change colors here (the variables at the top). Dark mode is automatic. */
+
+:root {
+  --bg: #e8ecef;        /* page background */
+  --ink: #12263a;       /* main text */
+  --card: #ffffff;      /* brand card (keep white so logos stay visible) */
+  --line: #d5dce2;      /* card border */
+  --chip: #12263a;      /* social icon circle */
+  --chip-text: #ffffff; /* social icon color */
+  --accent: #c8372d;    /* icon hover + keyboard focus */
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e161e;
+    --ink: #e8eef3;
+    --line: #26343f;
+    color-scheme: dark;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Outfit", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+}
+
+main {
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 44px 20px 56px;
+}
+
+/* Header */
+header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.star {
+  display: block;
+  width: 34px;
+  height: 34px;
+  margin: 0 auto 10px;
+}
+
+h1 {
+  margin: 0 0 0 0.14em;
+  font-weight: 300;
+  font-size: 3.4rem;
+  letter-spacing: 0.14em;
+  line-height: 1;
+}
+
+/* Brand card */
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 14px;
+  padding: 26px 22px 20px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 110px;
+}
+
+.logo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* Used when a brand has no logo image yet */
+.wordmark {
+  font-size: 1.7rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-align: center;
+  color: #12263a;
+}
+
+/* Social icons */
+.social {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.social a {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--chip);
+  color: var(--chip-text);
+  transition: background 0.2s, transform 0.2s;
+}
+
+.social a:hover {
+  background: var(--accent);
+  transform: translateY(-2px);
+}
+
+.social a:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.social svg {
+  width: 22px;
+  height: 22px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .social a {
+    transition: none;
+  }
+  .social a:hover {
+    transform: none;
+  }
+}
