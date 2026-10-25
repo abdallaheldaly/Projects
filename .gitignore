@@ -1,2 +1,5 @@
 .qodo
 **/ephemeral/
+
+**/ephemeral/
+.DS_Store
